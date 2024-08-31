@@ -8,12 +8,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useTheme } from "next-themes";
 import RecipeList from './RecipeList';
 import MultiSelect from '@/components/MultiSelect';
+import LottieGenerateAnimation from '@/components/LottieGenerateAnimation';
 
 // Initialize the Google Generative AI with your API key
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
 
 const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala'];
-const cuisines  = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese'];
+const cuisines  = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese'];
 const typeOfMeal  = ['Snacks', 'Meal', 'Munchies', 'Sweet Dish', 'Salads'];
 
 
@@ -125,8 +126,16 @@ export function RecipeGenerator() {
       {/* Left side - Output */}
       <div className="w-full md:w-3/5 p-6 bg-gray-100 dark:bg-gray-700 overflow-auto">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">Generated Recipes</h2>
-        {isLoading ? (
+        {/* {isLoading ? (
           <p className="dark:text-white">Generating recipes...</p>
+        ) : (
+          <RecipeList recipes={recipes} />
+        )} */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <LottieGenerateAnimation height={400} width={400} />
+            <p className="dark:text-white mt-4">Generating recipes...</p>
+          </div>
         ) : (
           <RecipeList recipes={recipes} />
         )}
