@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import {FaBars, FaTimes} from "react-icons/fa";
 import BrandLogo from "@/components/BrandLogo";
+import {signIn, signOut, useSession} from "next-auth/react"
 // import {useSession, signIn} from "next-auth/react"
 // import {GlobalContext} from "@/app/contexts/UserContext";
 // import {useContext} from "react";
@@ -14,7 +15,7 @@ import BrandLogo from "@/components/BrandLogo";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+    const session = useSession()
     // const {data: session} = useSession()
     // const {userData, setUserData, selectedChain, setSelectedChain} = useContext(GlobalContext);
 
@@ -80,7 +81,10 @@ export default function Navbar() {
                     </div>
                     <div className="hidden md:flex gap-2 items-center justify-center font-bold">
                         <Link href="/find" className=" px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500 ">
-                            Find 
+                            Mix & Match 
+                        </Link>
+                        <Link href="/party" className=" px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500 ">
+                            Party Planner
                         </Link>
                         <Link
                             href="/profile"
@@ -90,35 +94,20 @@ export default function Navbar() {
 
                     </div>
                     <div className="hidden md:flex gap-2 items-center justify-center font-bold  ">
-
-                        {/*login with world id*/}
-                        {/* {
-                            session && userData ? (
-                                <div className="flex flex-row gap-3 items-center">
-
-                                    {
-                                        selectedChain &&
-                                        <img src={selectedChain.image} alt={selectedChain.name}
-                                             className="w-7 h-7 rounded-full"/>
-
-                                    }
-                                    <ConnectWallet/>
-                                </div>
-                            ) : <div>
-                                <button
-                                    onClick={() => signIn('worldcoin')}
-                                    className=" px-3 py-1 text-white bg-theme-blue-light hover:bg-theme-blue rounded-lg "
-                                >Login with World ID
-                                </button>
-                            </div>
-                        } */}
-                        <div>
+                        {session.data?.user &&
                             <button
-                                // onClick={() => signIn('worldcoin')}
-                                className=" px-3 py-1 text-white bg-theme-blue-light hover:bg-theme-blue rounded-lg "
-                            >Login with World ID
+                                onClick={() => signOut()}
+                                className="px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                            >Logout
                             </button>
-                        </div>
+                        }
+                        {!session.data?.user &&
+                            <button
+                                onClick={() => signIn()}
+                                className="px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                            >Login with Google
+                            </button>
+                        }
                     </div>
 
                     <button
@@ -133,24 +122,23 @@ export default function Navbar() {
                 <div className="md:hidden my-2 bg-white">
                     {isMenuOpen && (<div
                         className=" text-center flex flex-col gap-2  border-t border-theme-blue-light py-2  font-bold">
-                        <Link className=" py-1 hover:text-black text-gray-500" href="/create">Create</Link>
-                        <Link className=" py-1 hover:text-black text-gray-500" href="/vote">Vote</Link>
-                        {/*login with world id*/}
-                        {
-                            session ? (
-                                <Link
-                                    href="/profile"
-                                    className=" mx-4 px-3 py-1 text-white bg-theme-blue-light hover:bg-theme-blue rounded-lg "
-                                >Profile
-                                </Link>
-                            ) : (
-                                <button
-                                    onClick={() => signIn('worldcoin')}
-                                    className=" mx-4 px-3 py-1 text-white bg-theme-blue-light hover:bg-theme-blue rounded-lg "
-                                >Login with World ID</button>
-                            )
-                        }
-
+                        <Link className=" py-1 hover:text-black text-gray-500" href="/find">Mix & Match</Link>
+                        <Link className=" py-1 hover:text-black text-gray-500" href="/party">Party Planner</Link>
+                        <Link className=" py-1 hover:text-black text-gray-500" href="/profile">Profile</Link>
+                         {session.data?.user && <div>
+                            <button
+                                onClick={() => signOut()}
+                                className="px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                            >Logout
+                            </button>
+                        </div> }
+                        {!session.data?.user &&  <div>
+                            <button
+                                onClick={() => signIn()}
+                                className="px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                            >Login with Google
+                            </button>
+                        </div>}
                     </div>)}
                 </div>
 

@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import RecipeList from './RecipeList';
 import MultiSelect from '@/components/MultiSelect';
 import LottieGenerateAnimation from '@/components/LottieGenerateAnimation';
-import LoadingText from './LoadingText'; // Adjust the import path as needed
+import LoadingText from './LoadingText';
 
 // Initialize the Google Generative AI with your API key
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
@@ -101,6 +101,7 @@ export function RecipeGenerator() {
       }
 
       // sending the recipe name to the ai to generate image 
+      // commented because token finished have to pay for more...
       // const recipesWithImages = await Promise.all(generatedRecipes.map(async (recipe) => {
       //   const imageUrl = await generateImage(recipe);
       //   return { ...recipe, image: imageUrl };
@@ -125,17 +126,11 @@ export function RecipeGenerator() {
   return (
     <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800">
       {/* Left side - Output */}
-      <div className="w-full md:w-3/5 p-6 bg-gray-100 dark:bg-gray-700 overflow-auto">
+      <div className="w-full md:w-3/5 p-6 bg-gray-100 dark:bg-gray-700 overflow-auto h-1/2 md:h-full">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">Find your match</h2>
-        {/* {isLoading ? (
-          <p className="dark:text-white">Generating recipes...</p>
-        ) : (
-          <RecipeList recipes={recipes} />
-        )} */}
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <LottieGenerateAnimation height={400} width={400} />
-            {/* <p className="dark:text-white mt-4">Mix and Matching...</p> */}
+            <LottieGenerateAnimation height={200} width={200} />
             <LoadingText />
           </div>
         ) : (
@@ -144,7 +139,7 @@ export function RecipeGenerator() {
       </div>
 
       {/* Right side - Input */}
-      <div className="w-full md:w-2/5 p-6 bg-white dark:bg-gray-800 overflow-auto">
+      <div className="w-full md:w-2/5 p-6 bg-white dark:bg-gray-800 overflow-auto h-1/2 md:h-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold dark:text-white">What you got?</h2>
           <Button onClick={toggleTheme} variant="outline" size="icon">
@@ -203,23 +198,7 @@ export function RecipeGenerator() {
               placeholder="Choose meal time"
             />
           </div>
-          {/* Meal timing */}
-          {/* <div>
-            <Label className="dark:text-white">Meal Time</Label>
-            <div className="flex space-x-2">
-              {['Breakfast', 'Lunch', 'Dinner'].map((mealTime) => (
-                <Button
-                  key={mealTime}
-                  variant={selectedMealTime === mealTime ? 'default' : 'outline'}
-                  onClick={() => setSelectedMealTime(mealTime)}
-                  className="dark:bg-gray-700 dark:text-white dark:hover:bg-white dark:hover:text-black"
-                >
-                  {mealTime}
-                </Button>
-              ))}
-            </div>
-          </div> */}
-          {/* additional spices */}
+
           <div>
             <Label htmlFor="additionalSpices" className="dark:text-white">Additional Spices (Optional)</Label>
             <Input
@@ -250,7 +229,6 @@ export function RecipeGenerator() {
           <Button 
             className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
             onClick={handleGenerateRecipe} 
-            // disabled={isLoading}
             disabled={isLoading || generatingImage}
           >
             {isLoading ? 'Simmering flavors...' : 'Find Your Mix'}

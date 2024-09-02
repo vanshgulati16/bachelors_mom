@@ -44,7 +44,7 @@ const didactGothic = Didact_Gothic({
 });
 
 export const metadata = {
-  title: "Door Dash",
+  title: "Dish Dash",
   description: "Make dishes with your available ingredients",
 };
 

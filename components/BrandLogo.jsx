@@ -4,7 +4,7 @@ import Link from "next/link";
 
 function BrandLogo() {
     return (
-        <Link href="/" className="flex gap-2 flex-row items-center justify-center px-3 py-1">
+        <Link href="/landing" className="flex gap-2 flex-row items-center justify-center px-3 py-1">
             <Image
                 src="/img/dishdash_logo.jpeg"
                 alt="logo"
