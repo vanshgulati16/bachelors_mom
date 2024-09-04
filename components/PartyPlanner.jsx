@@ -113,6 +113,7 @@ const PartyPlanner = () => {
   ];
 
   const dietaryOptions = [
+    "Non Vegetarian",
     "Vegetarian",
     "Vegan",
     "Gluten-free",

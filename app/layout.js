@@ -31,6 +31,7 @@ import { Inter, EB_Garamond, Didact_Gothic } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/toaster"
 
 const ebGaramond = EB_Garamond({ 
   subsets: ["latin"],
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
             <main>
               {children}
             </main>
+            <Toaster />
           </div>
         </Providers>
       </body>

@@ -86,6 +86,9 @@ export default function Navbar() {
                         <Link href="/party" className=" px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500 ">
                             Party Planner
                         </Link>
+                        <Link href="/weekPlanner" className=" px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500 ">
+                            Week Meal Planner
+                        </Link>
                         <Link
                             href="/profile"
                             className=" px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500 "
@@ -124,6 +127,7 @@ export default function Navbar() {
                         className=" text-center flex flex-col gap-2  border-t border-theme-blue-light py-2  font-bold">
                         <Link className=" py-1 hover:text-black text-gray-500" href="/find">Mix & Match</Link>
                         <Link className=" py-1 hover:text-black text-gray-500" href="/party">Party Planner</Link>
+                        <Link className=" py-1 hover:text-black text-gray-500" href="/weekPlanner">Weekly Meal Planner</Link>
                         <Link className=" py-1 hover:text-black text-gray-500" href="/profile">Profile</Link>
                          {session.data?.user && <div>
                             <button

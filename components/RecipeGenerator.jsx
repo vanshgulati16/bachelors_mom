@@ -95,6 +95,7 @@ export function RecipeGenerator() {
       let generatedRecipes = [];
       try {
         generatedRecipes = JSON.parse(response.text());
+        console.log('API Response:', generatedRecipes);
       } catch (error) {
         console.error('Error parsing JSON:', error);
         generatedRecipes = [{ name: 'Error', description: 'Failed to parse recipe data. Please try again.' }];
