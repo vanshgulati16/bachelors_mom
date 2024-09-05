@@ -1,7 +1,6 @@
 'use client'
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,8 +9,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, X } from "lucide-react";
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
+import { Input } from './ui/input';
 import MultiSelect from './MultiSelect';
 import { toast } from "@/components/hooks/use-toast";
+import WeeklyPlannerList from './WeeklyPlannerList';
+import { Spinner } from './Spinner';
+import Loadingtext from './LoadingText';
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
 
@@ -21,6 +24,7 @@ const dietaryRestrictions = ['Non-Vegetarian', 'Vegetarian', 'Vegan', 'Gluten-Fr
 
 export default function WeeklyPlanner() {
   const [glossaryBought, setGlossaryBought] = useState('');
+  const [profession, setProfession] = useState('');
   const [spicesAvailable, setSpicesAvailable] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
   const [planDuration, setPlanDuration] = useState('week');
@@ -71,6 +75,7 @@ export default function WeeklyPlanner() {
         Dietary restrictions: ${selectedDietaryRestrictions.join(', ')}
         Cuisines: ${selectedCuisines.join(', ')}
         Meal times: ${selectedMealTimes.join(', ')}
+        Profession: ${profession}
 
         For each day, provide meals for the selected meal times. Include a brief description and main ingredients for each meal.
         Format the response as a JSON array of objects, where each object represents a day:
@@ -84,6 +89,7 @@ export default function WeeklyPlanner() {
                 "dish": "Dish name",
                 "description": "Brief description",
                 "mainIngredients": ["ingredient1", "ingredient2"]
+                "time": "time to make the dish"
               }
             ]
           }
@@ -132,14 +138,116 @@ export default function WeeklyPlanner() {
     }
   };
 
+  // const parseMealPlanResponse = (responseText) => {
+  //   const meals = [];
+  //   const lines = responseText.split('\n').filter(line => line.trim() !== '');
+    
+  //   let currentMeal = null;
+  //   let description = [];
+  
+  //   for (const line of lines) {
+  //     const trimmedLine = line.trim();
+      
+  //     // Check for meal time headers
+  //     if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+  //       if (currentMeal) {
+  //         currentMeal.description = description.join(' ').trim();
+  //         meals.push(currentMeal);
+  //         description = [];
+  //       }
+  //       const mealTime = trimmedLine.replace(/\*\*/g, '').trim();
+  //       currentMeal = { mealTime, dish: '', description: '', mainIngredients: [] };
+  //     } 
+  //     // Check for dish names (usually prefixed with a dash or bullet point)
+  //     else if (trimmedLine.startsWith('-') || trimmedLine.startsWith('•')) {
+  //       if (currentMeal) {
+  //         currentMeal.dish = trimmedLine.substring(1).trim();
+  //         // Extract main ingredients from the dish name
+  //         currentMeal.mainIngredients = currentMeal.dish
+  //           .split(' ')
+  //           .filter(word => word.length > 3 && !['with', 'and', 'the', 'for'].includes(word.toLowerCase()));
+  //       }
+  //     } 
+  //     // Anything else is considered part of the description
+  //     else {
+  //       description.push(trimmedLine);
+  //     }
+  //   }
+  
+  //   // Add the last meal if it exists
+  //   if (currentMeal) {
+  //     currentMeal.description = description.join(' ').trim();
+  //     meals.push(currentMeal);
+  //   }
+  
+  //   // Ensure all meals have all required properties
+  //   return meals.map(meal => ({
+  //     mealTime: meal.mealTime || 'Unspecified',
+  //     dish: meal.dish || 'Not specified',
+  //     description: meal.description || 'No description provided',
+  //     mainIngredients: meal.mainIngredients.length ? meal.mainIngredients : ['Not specified']
+  //   }));
+  // };
+  
+  // // Example usage in the handleChangeMeals function
+  // const handleChangeMeals = async (dayNumber, selectedMeals) => {
+  //   setIsLoading(true);
+  //   setError(null);
+  //   try {
+  //     const dateRange = formatDateRange();
+  //     const prompt = `Update the meal plan for Day ${dayNumber} (${dateRange}) with the following changes:
+  //       ${selectedMeals.map(meal => `${meal.mealTime}: ${meal.dish}`).join('\n')}
+  
+  //       Provide the updated meals for this day only, maintaining the same format as before.`;
+  
+  //     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  //     const result = await model.generateContent(prompt);
+  //     let responseText = await result.response.text();
+  //     console.log("update meal:", responseText)
+  //     const updatedMeals = parseMealPlanResponse(responseText);
+  
+  //     if (!updatedMeals || updatedMeals.length === 0) {
+  //       throw new Error('The generated meal plan is not in the expected format.');
+  //     }
+  
+  //     setMealPlan(prevPlan => prevPlan.map(day => 
+  //       day.day === dayNumber ? { ...day, meals: updatedMeals } : day
+  //     ));
+  
+  //     toast({
+  //       title: "Meal Plan Updated",
+  //       description: `Successfully updated meals for Day ${dayNumber}.`,
+  //     });
+  
+  //     return updatedMeals;
+  //   } catch (error) {
+  //     console.error('Error updating meal plan:', error);
+  //     setError(error.message || 'An error occurred while updating the meal plan. Please try again.');
+  //     toast({
+  //       title: "Error",
+  //       description: error.message || 'Failed to update meal plan. Please try again.',
+  //       variant: "destructive",
+  //     });
+  //     throw error;
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
       {/* Left side - Output */}
       <div className="w-3/5 p-6 overflow-auto">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">Your Meal Plan</h2>
+        <p className='text-red-500'>Modify meal display to be fixed</p>
+       {/* Left side - Output */}
         {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-lg dark:text-white">Generating your meal plan...</p>
+          <div className="flex flex-col items-center justify-center h-full">
+            {/* <p className="text-lg dark:text-white">Generating your meal plan...</p> */}
+            <Spinner/>
+            <Loadingtext/>
           </div>
         ) : error ? (
           <div className="text-red-500 dark:text-red-400">
@@ -147,28 +255,12 @@ export default function WeeklyPlanner() {
             <p className="mt-2">Please try again or contact support if the issue persists.</p>
           </div>
         ) : (
-          <div className="grid gap-4">
-            {mealPlan.map((day) => (
-              <Card key={day.day} className="dark:bg-gray-700">
-                <CardContent className="p-4">
-                  <h3 className="text-lg font-semibold mb-2 dark:text-white">
-                    Day {day.day} - {format(new Date(day.date), 'MMMM d, yyyy')}
-                  </h3>
-                  {day.meals.map((meal, index) => (
-                    <div key={index} className="mb-2">
-                      <h4 className="font-medium dark:text-white">{meal.mealTime}: {meal.dish}</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{meal.description}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Main ingredients: {meal.mainIngredients.join(', ')}
-                      </p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          // <WeeklyPlannerList mealPlan={mealPlan} onChangeMeals={handleChangeMeals} />
+          <WeeklyPlannerList mealPlan={mealPlan} />
+
         )}
-      </div>
+
+      </div> 
 
       {/* Right side - Input */}
       <div className="w-2/5 p-6 bg-white dark:bg-gray-900 overflow-auto">
@@ -192,6 +284,17 @@ export default function WeeklyPlanner() {
               placeholder="Enter available spices"
               value={spicesAvailable}
               onChange={(e) => setSpicesAvailable(e.target.value)}
+              className="dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="profession" className="dark:text-white">Your Profession</Label>
+            <Input
+              id="profession"
+              placeholder="Enter your profession"
+              value={profession}
+              onChange={(e) => setProfession(e.target.value)}
               className="dark:bg-gray-800 dark:text-white"
             />
           </div>
