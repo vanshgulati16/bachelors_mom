@@ -10,6 +10,8 @@ import RecipeList from './RecipeList';
 import MultiSelect from '@/components/MultiSelect';
 import LottieGenerateAnimation from '@/components/LottieGenerateAnimation';
 import LoadingText from './LoadingText';
+import { useSession } from 'next-auth/react';
+import NotLoggedInComponent from './NotLoggedIn';
 
 // Initialize the Google Generative AI with your API key
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
@@ -31,6 +33,8 @@ export function RecipeGenerator() {
   const [selectedMealTime, setSelectedMealTime] = useState([]);
   const [generatingImage, setGeneratingImage] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  const {data: session} = useSession()
 
   // Hitting the AI image generation api
   const generateImage = async (recipe) => {
@@ -125,117 +129,128 @@ export function RecipeGenerator() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800">
-      {/* Left side - Output */}
-      <div className="w-full md:w-3/5 p-6 bg-gray-100 dark:bg-gray-700 overflow-auto h-1/2 md:h-full">
-        <h2 className="text-2xl font-bold mb-4 dark:text-white">Find your match</h2>
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <LottieGenerateAnimation height={200} width={200} />
-            <LoadingText />
-          </div>
-        ) : (
-          <RecipeList recipes={recipes} />
-        )}
-      </div>
-
-      {/* Right side - Input */}
-      <div className="w-full md:w-2/5 p-6 bg-white dark:bg-gray-800 overflow-auto h-1/2 md:h-full">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold dark:text-white">What you got?</h2>
-          <Button onClick={toggleTheme} variant="outline" size="icon">
-            {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
-          </Button>
-        </div>
-        
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="ingredients" className="dark:text-white">Ingredients</Label>
-            <Input
-              id="ingredients"
-              placeholder="Enter ingredients (e.g., tomato, onion, paneer)"
-              value={ingredients}
-              onChange={(e) => setIngredients(e.target.value)}
-              className="dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <Label className="dark:text-white">Spices</Label>
-            <MultiSelect
-              options={basicSpices}
-              selectedOptions={selectedSpices}
-              onChange={setSelectedSpices}
-              placeholder="Choose spices"
-            />
-          </div>
-
-          <div>
-            <Label className="dark:text-white">Cuisines</Label>
-            <MultiSelect
-              options={cuisines}
-              selectedOptions={selectedCuisines}
-              onChange={setSelectedCuisines}
-              placeholder="Choose cuisines"
-            />
-          </div>
-
-          <div>
-            <Label className="dark:text-white">Type of Meal</Label>
-            <MultiSelect
-              options={typeOfMeal}
-              selectedOptions={selectedTypeOfMeal}
-              onChange={setSelectedTypeOfMeal}
-              placeholder="Choose meal type"
-            />
-          </div>
-
-          <div>
-            <Label className="dark:text-white">Meal Time</Label>
-            <MultiSelect
-              options={['Breakfast', 'Lunch', 'Dinner']}
-              selectedOptions={selectedMealTime}
-              onChange={setSelectedMealTime}
-              placeholder="Choose meal time"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="additionalSpices" className="dark:text-white">Additional Spices (Optional)</Label>
-            <Input
-              id="additionalSpices"
-              placeholder="Enter additional spices"
-              value={additionalSpices}
-              onChange={(e) => setAdditionalSpices(e.target.value)}
-              className="dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <Label className="dark:text-white">Cooking Time</Label>
-            <div className="flex space-x-2">
-              {['15-20 min', '25-35 min', '40-60 min'].map((time) => (
-                <Button
-                  key={time}
-                  variant={cookingTime === time ? 'default' : 'outline'}
-                  onClick={() => setCookingTime(time)}
-                  className="dark:bg-gray-700 dark:text-white dark:hover:bg-white dark:hover:text-black"
-                >
-                  {time}
-                </Button>
-              ))}
+    <>
+      {session ? (
+        <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800">
+        {/* Left side - Output */}
+        <div className="w-full md:w-3/5 p-6 bg-gray-100 dark:bg-gray-700 overflow-auto h-1/2 md:h-full">
+          <h2 className="text-2xl font-bold mb-4 dark:text-white">Find your match</h2>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <LottieGenerateAnimation height={200} width={200} />
+              <LoadingText />
             </div>
-          </div>
+          ) : (
+            <RecipeList recipes={recipes} />
+          )}
+        </div>
 
-          <Button 
-            className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
-            onClick={handleGenerateRecipe} 
-            disabled={isLoading || generatingImage}
-          >
-            {isLoading ? 'Simmering flavors...' : 'Find Your Mix'}
-          </Button>
+        {/* Right side - Input */}
+        <div className="w-full md:w-2/5 p-6 bg-white dark:bg-gray-800 overflow-auto h-1/2 md:h-full">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold dark:text-white">What you got?</h2>
+            <Button onClick={toggleTheme} variant="outline" size="icon">
+              {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+            </Button>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="ingredients" className="dark:text-white">Ingredients</Label>
+              <Input
+                id="ingredients"
+                placeholder="Enter ingredients (e.g., tomato, onion, paneer)"
+                value={ingredients}
+                onChange={(e) => setIngredients(e.target.value)}
+                className="dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Spices</Label>
+              <MultiSelect
+                options={basicSpices}
+                selectedOptions={selectedSpices}
+                onChange={setSelectedSpices}
+                placeholder="Choose spices"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Cuisines</Label>
+              <MultiSelect
+                options={cuisines}
+                selectedOptions={selectedCuisines}
+                onChange={setSelectedCuisines}
+                placeholder="Choose cuisines"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Type of Meal</Label>
+              <MultiSelect
+                options={typeOfMeal}
+                selectedOptions={selectedTypeOfMeal}
+                onChange={setSelectedTypeOfMeal}
+                placeholder="Choose meal type"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Meal Time</Label>
+              <MultiSelect
+                options={['Breakfast', 'Lunch', 'Dinner']}
+                selectedOptions={selectedMealTime}
+                onChange={setSelectedMealTime}
+                placeholder="Choose meal time"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="additionalSpices" className="dark:text-white">Additional Spices (Optional)</Label>
+              <Input
+                id="additionalSpices"
+                placeholder="Enter additional spices"
+                value={additionalSpices}
+                onChange={(e) => setAdditionalSpices(e.target.value)}
+                className="dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Cooking Time</Label>
+              <div className="flex space-x-2">
+                {['15-20 min', '25-35 min', '40-60 min'].map((time) => (
+                  <Button
+                    key={time}
+                    variant={cookingTime === time ? 'default' : 'outline'}
+                    onClick={() => setCookingTime(time)}
+                    className="dark:bg-gray-700 dark:text-white dark:hover:bg-white dark:hover:text-black"
+                  >
+                    {time}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <Button 
+              className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
+              onClick={handleGenerateRecipe} 
+              disabled={isLoading || generatingImage}
+            >
+              {isLoading ? 'Simmering flavors...' : 'Find Your Mix'}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+      ) : (
+        <>
+           {/* <h1>Please Login</h1>
+          <Button onClick={()=>signIn("google")}>Sign in with google</Button> */}
+          <NotLoggedInComponent/>
+        </>
+      )}
+      
+    </>
   );
 }

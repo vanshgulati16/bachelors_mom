@@ -8,7 +8,7 @@ import { SessionProvider } from 'next-auth/react';
 
 export function Providers({ children, ...props }) {
   return (
-    <SessionProvider>
+    <SessionProvider session={props.session}>
       <NextThemesProvider {...props}>
           {children}
       </NextThemesProvider>

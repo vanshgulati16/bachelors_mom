@@ -32,6 +32,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toaster"
+import SessionWrapper from "@/components/SessionWrapper";
 
 const ebGaramond = EB_Garamond({ 
   subsets: ["latin"],
@@ -51,18 +52,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`pt-10 ${ebGaramond.variable} ${didactGothic.variable}`}>
-        <Providers attribute="class" defaultTheme="system" enableSystem>
-          <Navbar />
-          <div>
-            <main>
-              {children}
-            </main>
-            <Toaster />
-          </div>
-        </Providers>
-      </body>
-    </html>
+    <SessionWrapper>
+      <html lang="en">
+        <body className={`pt-10 ${ebGaramond.variable} ${didactGothic.variable}`}>
+          <Providers attribute="class" defaultTheme="system" enableSystem>
+            <Navbar />
+            <div>
+              <main>
+                {children}
+              </main>
+              <Toaster />
+            </div>
+          </Providers>
+        </body>
+      </html>
+    </SessionWrapper>
   );
 }

@@ -15,6 +15,8 @@ import { toast } from "@/components/hooks/use-toast";
 import WeeklyPlannerList from './WeeklyPlannerList';
 import { Spinner } from './Spinner';
 import Loadingtext from './LoadingText';
+import { useSession } from 'next-auth/react';
+import NotLoggedInComponent from './NotLoggedIn';
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
 
@@ -34,6 +36,8 @@ export default function WeeklyPlanner() {
   const [mealPlan, setMealPlan] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const {data: session} = useSession() 
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
@@ -237,145 +241,151 @@ export default function WeeklyPlanner() {
 
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
-      {/* Left side - Output */}
-      <div className="w-3/5 p-6 overflow-auto">
-        <h2 className="text-2xl font-bold mb-4 dark:text-white">Your Meal Plan</h2>
-        <p className='text-red-500'>Modify meal display to be fixed</p>
-       {/* Left side - Output */}
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            {/* <p className="text-lg dark:text-white">Generating your meal plan...</p> */}
-            <Spinner/>
-            <Loadingtext/>
-          </div>
-        ) : error ? (
-          <div className="text-red-500 dark:text-red-400">
-            <p>{error}</p>
-            <p className="mt-2">Please try again or contact support if the issue persists.</p>
-          </div>
-        ) : (
-          // <WeeklyPlannerList mealPlan={mealPlan} onChangeMeals={handleChangeMeals} />
-          <WeeklyPlannerList mealPlan={mealPlan} />
-
-        )}
-
-      </div> 
-
-      {/* Right side - Input */}
-      <div className="w-2/5 p-6 bg-white dark:bg-gray-900 overflow-auto">
-        <h2 className="text-2xl font-bold mb-4 dark:text-white">Meal Plan Settings</h2>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="glossary" className="dark:text-white">Groceries Bought</Label>
-            <Textarea
-              id="glossary"
-              placeholder="Enter groceries you've bought"
-              value={glossaryBought}
-              onChange={(e) => setGlossaryBought(e.target.value)}
-              className="dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="spices" className="dark:text-white">Spices Available</Label>
-            <Textarea
-              id="spices"
-              placeholder="Enter available spices"
-              value={spicesAvailable}
-              onChange={(e) => setSpicesAvailable(e.target.value)}
-              className="dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="profession" className="dark:text-white">Your Profession</Label>
-            <Input
-              id="profession"
-              placeholder="Enter your profession"
-              value={profession}
-              onChange={(e) => setProfession(e.target.value)}
-              className="dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <Label className="dark:text-white">Plan Duration</Label>
-            <div className="flex items-center space-x-2">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-[280px] justify-start text-left font-normal ${
-                      !selectedDate && "text-muted-foreground"
-                    }`}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {selectedDate ? formatDateRange() : <span>Select week/month</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={handleDateSelect}
-                    onMonthSelect={handleMonthSelect}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {selectedDate && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={clearDateSelection}
-                  aria-label="Clear date selection"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+    <>
+    {session ? (
+      <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
+        {/* Left side - Output */}
+        <div className="w-3/5 p-6 overflow-auto">
+          <h2 className="text-2xl font-bold mb-4 dark:text-white">Your Meal Plan</h2>
+          <p className='text-red-500'>Modify meal display to be fixed</p>
+        {/* Left side - Output */}
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              {/* <p className="text-lg dark:text-white">Generating your meal plan...</p> */}
+              <Spinner/>
+              <Loadingtext/>
             </div>
-          </div>
+          ) : error ? (
+            <div className="text-red-500 dark:text-red-400">
+              <p>{error}</p>
+              <p className="mt-2">Please try again or contact support if the issue persists.</p>
+            </div>
+          ) : (
+            // <WeeklyPlannerList mealPlan={mealPlan} onChangeMeals={handleChangeMeals} />
+            <WeeklyPlannerList mealPlan={mealPlan} />
 
-          <div>
-            <Label className="dark:text-white">Dietary Restrictions</Label>
-            <MultiSelect
-              options={dietaryRestrictions}
-              selectedOptions={selectedDietaryRestrictions}
-              onChange={setSelectedDietaryRestrictions}
-              placeholder="Choose dietary restrictions"
-            />
-          </div>
+          )}
 
-          <div>
-            <Label className="dark:text-white">Cuisines</Label>
-            <MultiSelect
-              options={cuisines}
-              selectedOptions={selectedCuisines}
-              onChange={setSelectedCuisines}
-              placeholder="Choose cuisines"
-            />
-          </div>
+        </div> 
 
-          <div>
-            <Label className="dark:text-white">Meal Times</Label>
-            <MultiSelect
-              options={mealTimes}
-              selectedOptions={selectedMealTimes}
-              onChange={setSelectedMealTimes}
-              placeholder="Choose meal times"
-            />
-          </div>
+        {/* Right side - Input */}
+        <div className="w-2/5 p-6 bg-white dark:bg-gray-900 overflow-auto">
+          <h2 className="text-2xl font-bold mb-4 dark:text-white">Meal Plan Settings</h2>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="glossary" className="dark:text-white">Groceries Bought</Label>
+              <Textarea
+                id="glossary"
+                placeholder="Enter groceries you've bought"
+                value={glossaryBought}
+                onChange={(e) => setGlossaryBought(e.target.value)}
+                className="dark:bg-gray-800 dark:text-white"
+              />
+            </div>
 
-          <Button 
-            className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
-            onClick={generateMealPlan} 
-            disabled={isLoading || !selectedDate}
-          >
-            {isLoading ? 'Generating Plan...' : 'Generate Meal Plan'}
-          </Button>
+            <div>
+              <Label htmlFor="spices" className="dark:text-white">Spices Available</Label>
+              <Textarea
+                id="spices"
+                placeholder="Enter available spices"
+                value={spicesAvailable}
+                onChange={(e) => setSpicesAvailable(e.target.value)}
+                className="dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="profession" className="dark:text-white">Your Profession</Label>
+              <Input
+                id="profession"
+                placeholder="Enter your profession"
+                value={profession}
+                onChange={(e) => setProfession(e.target.value)}
+                className="dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Plan Duration</Label>
+              <div className="flex items-center space-x-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-[280px] justify-start text-left font-normal ${
+                        !selectedDate && "text-muted-foreground"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {selectedDate ? formatDateRange() : <span>Select week/month</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={handleDateSelect}
+                      onMonthSelect={handleMonthSelect}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {selectedDate && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={clearDateSelection}
+                    aria-label="Clear date selection"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Dietary Restrictions</Label>
+              <MultiSelect
+                options={dietaryRestrictions}
+                selectedOptions={selectedDietaryRestrictions}
+                onChange={setSelectedDietaryRestrictions}
+                placeholder="Choose dietary restrictions"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Cuisines</Label>
+              <MultiSelect
+                options={cuisines}
+                selectedOptions={selectedCuisines}
+                onChange={setSelectedCuisines}
+                placeholder="Choose cuisines"
+              />
+            </div>
+
+            <div>
+              <Label className="dark:text-white">Meal Times</Label>
+              <MultiSelect
+                options={mealTimes}
+                selectedOptions={selectedMealTimes}
+                onChange={setSelectedMealTimes}
+                placeholder="Choose meal times"
+              />
+            </div>
+
+            <Button 
+              className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
+              onClick={generateMealPlan} 
+              disabled={isLoading || !selectedDate}
+            >
+              {isLoading ? 'Generating Plan...' : 'Generate Meal Plan'}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    ) : (
+      <NotLoggedInComponent/>
+    )}
+    </>
   );
 }
