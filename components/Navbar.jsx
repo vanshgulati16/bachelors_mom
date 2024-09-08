@@ -1,6 +1,7 @@
-"use client";
+"use client"; 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FaBars, FaTimes } from "react-icons/fa";
 import BrandLogo from "@/components/BrandLogo";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -15,6 +16,18 @@ import {
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const session = useSession();
+  const pathname = usePathname();
+
+  function handleSignOut(){
+    signOut({callbackUrl: '/'})
+  }
+
+  const getLinkClassName = (href) => {
+    const baseClasses = "px-3 py-1 rounded-lg text-lg";
+    return pathname === href
+      ? `${baseClasses} text-orange-600 font-extrabold`
+      : `${baseClasses} hover:text-black text-gray-500`;
+  };
 
   return (
     <nav className="fixed top-0 py-1 left-0 w-full z-10 border-b bg-white">
@@ -24,17 +37,20 @@ export default function Navbar() {
             <BrandLogo />
           </div>
           <div className="hidden md:flex gap-2 items-center justify-center font-bold">
-            <Link href="/find" className="px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500">
+            <Link href="/find" className={getLinkClassName("/find")}>
               Mix & Match
             </Link>
             {/* <Link href="/party" className=" px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500 ">
                 Party Planner
             </Link> */}
-            <Link href="/weekPlanner" className="px-3 py-1 rounded-lg text-lg hover:text-black text-gray-500">
+            <Link href="/weekPlanner" className={getLinkClassName("/weekPlanner")}>
               Week Meal Planner
             </Link>
           </div>
           <div className="hidden md:flex gap-2 items-center justify-center font-bold">
+            {session.data?.user && (
+              <span className="text-sm text-gray-600 mr-2">Hi, {session.data.user.name}</span>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
@@ -43,12 +59,12 @@ export default function Navbar() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                   <Link href="/profile" className="w-full">Profile</Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 {session.data?.user ? (
                   <DropdownMenuItem>
-                    <button onClick={() => signOut()} className="w-full text-left">
+                    <button onClick={handleSignOut} className="w-full text-left">
                       Logout
                     </button>
                   </DropdownMenuItem>
@@ -74,16 +90,16 @@ export default function Navbar() {
         <div className="md:hidden my-2 bg-white">
           {isMenuOpen && (
             <div className="text-center flex flex-col gap-2 border-t border-theme-blue-light py-2 font-bold">
-              <Link className="py-1 hover:text-black text-gray-500" href="/find">
+              <Link className={getLinkClassName("/find")} href="/find">
                 Mix & Match
               </Link>
               {/* <Link className=" py-1 hover:text-black text-gray-500" href="/party">Party Planner</Link> */}
-              <Link className="py-1 hover:text-black text-gray-500" href="/weekPlanner">
+              <Link className={getLinkClassName("/weekPlanner")} href="/weekPlanner">
                 Weekly Meal Planner
               </Link>
-              <Link className="py-1 hover:text-black text-gray-500" href="/profile">
+              {/* <Link className={getLinkClassName("/profile")} href="/profile">
                 Profile
-              </Link>
+              </Link> */}
               {session.data?.user ? (
                 <div>
                   <button
@@ -95,12 +111,21 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div>
-                  <button
-                    onClick={() => signIn()}
-                    className="px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
-                  >
-                    Login with Google
-                  </button>
+                  <form action={
+                    async ()=>{
+                      // "use server"
+                      await signIn("google")
+                    }
+
+                  }>
+                    <button
+                      // onClick={() => signIn()}
+                      type= "submit"
+                      className="px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
+                    >
+                      Login with Google
+                    </button>
+                  </form>
                 </div>
               )}
             </div>

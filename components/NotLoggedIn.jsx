@@ -16,9 +16,11 @@ const NotLoggedInComponent = () => {
         <AlertTitle>Oopsyy!</AlertTitle>
         <AlertDescription>You are not logged in.</AlertDescription>
       </Alert>
-      <Button onClick={handleLogin} variant="default">
-        Login with Google
-      </Button>
+      <form action={handleLogin}>
+        <Button variant="default">
+          Login with Google
+        </Button>
+      </form>
     </div>
   );
 };

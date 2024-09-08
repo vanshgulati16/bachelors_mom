@@ -17,6 +17,7 @@ import { Spinner } from './Spinner';
 import Loadingtext from './LoadingText';
 import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
+import ReviewButton from './ReviewButton';
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
 
@@ -243,11 +244,14 @@ export default function WeeklyPlanner() {
   return (
     <>
     {session ? (
-      <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
+      <div className="flex flex-col lg:flex-row h-screen bg-gray-100 dark:bg-gray-800">
         {/* Left side - Output */}
-        <div className="w-3/5 p-6 overflow-auto">
-          <h2 className="text-2xl font-bold mb-4 dark:text-white">Your Meal Plan</h2>
-          <p className='text-red-500'>Modify meal display to be fixed</p>
+        <div className="w-full lg:w-1/2 p-6 overflow-auto">
+          <div className='flex flex-row justify-between mb-4'>
+            <h2 className="text-2xl font-bold dark:text-white">Your Meal Plan</h2>
+            <ReviewButton/>
+          </div>
+          {/* <p className='text-red-500'>Modify meal display to be fixed</p> */}
         {/* Left side - Output */}
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full">
@@ -260,23 +264,27 @@ export default function WeeklyPlanner() {
               <p>{error}</p>
               <p className="mt-2">Please try again or contact support if the issue persists.</p>
             </div>
-          ) : (
-            // <WeeklyPlannerList mealPlan={mealPlan} onChangeMeals={handleChangeMeals} />
+          ) : mealPlan.length > 0 ? (
             <WeeklyPlannerList mealPlan={mealPlan} />
-
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <p className="text-xl text-gray-500 dark:text-gray-400">
+                Drop your ingredients on the right, and we'll cook up some epic recipes here. It's gonna be fire! 👨‍🍳✨
+              </p>
+            </div>
           )}
 
         </div> 
 
         {/* Right side - Input */}
-        <div className="w-2/5 p-6 bg-white dark:bg-gray-900 overflow-auto">
+        <div className="w-full lg:w-1/2 p-6 bg-white dark:bg-gray-900 overflow-auto">
           <h2 className="text-2xl font-bold mb-4 dark:text-white">Meal Plan Settings</h2>
           <div className="space-y-4">
             <div>
               <Label htmlFor="glossary" className="dark:text-white">Groceries Bought</Label>
               <Textarea
                 id="glossary"
-                placeholder="Enter groceries you've bought"
+                placeholder="Enter Groceries (e.g., tomato, onion, paneer)"
                 value={glossaryBought}
                 onChange={(e) => setGlossaryBought(e.target.value)}
                 className="dark:bg-gray-800 dark:text-white"
@@ -287,7 +295,7 @@ export default function WeeklyPlanner() {
               <Label htmlFor="spices" className="dark:text-white">Spices Available</Label>
               <Textarea
                 id="spices"
-                placeholder="Enter available spices"
+                placeholder="Enter Spices (e.g., salt, pepper, red chilli powder)"
                 value={spicesAvailable}
                 onChange={(e) => setSpicesAvailable(e.target.value)}
                 className="dark:bg-gray-800 dark:text-white"

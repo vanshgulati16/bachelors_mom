@@ -53,40 +53,40 @@ const MealCard = ({ meal, isModifying, onSelect, isSelected, onViewRecipe }) => 
 
 const DayCard = ({ day, onChangeMeals }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isModifying, setIsModifying] = useState(false);
-  const [selectedMeals, setSelectedMeals] = useState([]);
+  // const [isModifying, setIsModifying] = useState(false);
+  // const [selectedMeals, setSelectedMeals] = useState([]);
   const [localMeals, setLocalMeals] = useState(day.meals);
   const [recipeToView, setRecipeToView] = useState(null);
 
-  const handleModify = () => {
-    setIsModifying(true);
-    setIsExpanded(true);
-  };
+  // const handleModify = () => {
+  //   setIsModifying(true);
+  //   setIsExpanded(true);
+  // };
 
-  const handleSelectMeal = (meal) => {
-    setSelectedMeals(prev => 
-      prev.includes(meal) ? prev.filter(m => m !== meal) : [...prev, meal]
-    );
-  };
+  // const handleSelectMeal = (meal) => {
+  //   setSelectedMeals(prev => 
+  //     prev.includes(meal) ? prev.filter(m => m !== meal) : [...prev, meal]
+  //   );
+  // };
 
-  const handleChange = async () => {
-    try {
-      const updatedMeals = await onChangeMeals(day.day, selectedMeals);
-      setLocalMeals(updatedMeals);
-      toast({
-        title: "Meals Updated",
-        description: `Successfully updated meals for ${format(new Date(day.date), 'MMMM d, yyyy')}`,
-      });
-      setIsModifying(false);
-      setSelectedMeals([]);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update meals. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  // const handleChange = async () => {
+  //   try {
+  //     const updatedMeals = await onChangeMeals(day.day, selectedMeals);
+  //     setLocalMeals(updatedMeals);
+  //     toast({
+  //       title: "Meals Updated",
+  //       description: `Successfully updated meals for ${format(new Date(day.date), 'MMMM d, yyyy')}`,
+  //     });
+  //     setIsModifying(false);
+  //     setSelectedMeals([]);
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to update meals. Please try again.",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
 
   const handleViewRecipe = (dish) => {
     setRecipeToView(dish);
@@ -100,7 +100,7 @@ const DayCard = ({ day, onChangeMeals }) => {
             Day {day.day} - {format(new Date(day.date), 'EEEE, MMMM d, yyyy')}
           </h3>
           <div className="flex space-x-2">
-            {!isModifying && (
+            {/* {!isModifying && (
               <Button variant="outline" size="sm" onClick={handleModify}>
                 Modify
               </Button>
@@ -109,7 +109,7 @@ const DayCard = ({ day, onChangeMeals }) => {
               <Button variant="primary" size="sm" onClick={handleChange}>
                 Change
               </Button>
-            )}
+            )} */}
             <Button 
               variant="ghost" 
               size="sm" 
@@ -132,9 +132,9 @@ const DayCard = ({ day, onChangeMeals }) => {
                   <MealCard 
                     key={`${meal.mealTime}-${index}`}
                     meal={meal} 
-                    isModifying={isModifying}
-                    onSelect={handleSelectMeal}
-                    isSelected={selectedMeals.includes(meal)}
+                    // isModifying={isModifying}
+                    // onSelect={handleSelectMeal}
+                    // isSelected={selectedMeals.includes(meal)}
                     onViewRecipe={handleViewRecipe}
                   />
                 ))}

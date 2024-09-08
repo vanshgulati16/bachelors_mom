@@ -3,15 +3,18 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Moon, Sun } from "lucide-react";
+// import { Moon, Sun } from "lucide-react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useTheme } from "next-themes";
 import RecipeList from './RecipeList';
 import MultiSelect from '@/components/MultiSelect';
-import LottieGenerateAnimation from '@/components/LottieGenerateAnimation';
+import dynamic from 'next/dynamic';
+const LottieGenerateAnimation = dynamic(() => import('./LottieGenerateAnimation'), { ssr: false });
 import LoadingText from './LoadingText';
 import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
+import { Spinner } from './Spinner';
+import ReviewButton from './ReviewButton';
 
 // Initialize the Google Generative AI with your API key
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
@@ -124,9 +127,9 @@ export function RecipeGenerator() {
     }
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+  // const toggleTheme = () => {
+  //   setTheme(theme === 'dark' ? 'light' : 'dark');
+  // };
 
   return (
     <>
@@ -134,14 +137,24 @@ export function RecipeGenerator() {
         <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800">
         {/* Left side - Output */}
         <div className="w-full md:w-3/5 p-6 bg-gray-100 dark:bg-gray-700 overflow-auto h-1/2 md:h-full">
+        <div className='flex flex-row justify-between'>
           <h2 className="text-2xl font-bold mb-4 dark:text-white">Find your match</h2>
+          <ReviewButton/>
+        </div>
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full">
-              <LottieGenerateAnimation height={200} width={200} />
+              {/* <LottieGenerateAnimation height={200} width={200} /> */}
+              <Spinner/>
               <LoadingText />
             </div>
-          ) : (
+          ) : recipes.length > 0 ? (
             <RecipeList recipes={recipes} />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <p className="text-xl text-gray-500 dark:text-gray-400">
+                Drop your ingredients on the right, and we'll cook up some epic recipes here. It's gonna be fire! 👨‍🍳✨
+              </p>
+            </div>
           )}
         </div>
 
@@ -149,9 +162,9 @@ export function RecipeGenerator() {
         <div className="w-full md:w-2/5 p-6 bg-white dark:bg-gray-800 overflow-auto h-1/2 md:h-full">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold dark:text-white">What you got?</h2>
-            <Button onClick={toggleTheme} variant="outline" size="icon">
+            {/* <Button onClick={toggleTheme} variant="outline" size="icon">
               {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
-            </Button>
+            </Button> */}
           </div>
           
           <div className="space-y-4">
@@ -236,7 +249,7 @@ export function RecipeGenerator() {
             <Button 
               className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
               onClick={handleGenerateRecipe} 
-              disabled={isLoading || generatingImage}
+              disabled={isLoading || generatingImage || !ingredients || selectedSpices.length === 0 || selectedCuisines.length === 0}
             >
               {isLoading ? 'Simmering flavors...' : 'Find Your Mix'}
             </Button>
@@ -244,11 +257,7 @@ export function RecipeGenerator() {
         </div>
       </div>
       ) : (
-        <>
-           {/* <h1>Please Login</h1>
-          <Button onClick={()=>signIn("google")}>Sign in with google</Button> */}
-          <NotLoggedInComponent/>
-        </>
+        <NotLoggedInComponent/>
       )}
       
     </>

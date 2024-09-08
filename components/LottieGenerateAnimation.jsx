@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
-import Lottie from 'react-lottie';
-import animationData from '@/public/animation/generateAnimation';  // Adjust the path as needed
+import React from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import Lottie with SSR disabled
+const Lottie = dynamic(() => import('react-lottie'), { ssr: false });
 
 const LottieGenerateAnimation = ({ height = 300, width = 300 }) => {
+  // Dynamically import animation data
+  const [animationData, setAnimationData] = React.useState(null);
+
+  React.useEffect(() => {
+    import('@/public/animation/generateAnimation').then((module) => {
+      setAnimationData(module.default);
+    });
+  }, []);
 
   const defaultOptions = {
     loop: true,
@@ -20,6 +30,9 @@ const LottieGenerateAnimation = ({ height = 300, width = 300 }) => {
     background: 'transparent'
   };
 
+  if (!animationData) {
+    return <div style={containerStyle}></div>; // Or some loading placeholder
+  }
 
   return (
     <div className="flex flex-col items-center justify-center" style={containerStyle}>

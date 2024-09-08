@@ -15,7 +15,7 @@ function BrandLogo() {
             <div
                 className=" text-theme-blue-dark text-2xl"
             style={{fontWeight:900}}
-            >Dish Dash
+            >Dish Dash Momzie
             </div>
         </Link>
 

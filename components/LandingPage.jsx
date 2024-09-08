@@ -56,7 +56,7 @@ export default function LandingPage() {
             variants={fadeIn}
             className="mb-6 text-6xl font-bold"
           >
-            Dish Dash "Mommy"
+            Dish Dash Momzie
           </motion.h1>
           <motion.p 
             variants={fadeIn}
@@ -262,7 +262,7 @@ export default function LandingPage() {
       </Element> */}
 
       {/* Call to Action Section */}
-      <Element name="cta">
+      {/* <Element name="cta">
         <motion.section 
           initial="initial"
           whileInView="animate"
@@ -292,7 +292,7 @@ export default function LandingPage() {
                     {/* <Button className="w-full bg-primary text-primary-foreground text-lg hover:bg-primary/90" type="submit">
                       Get Early Access
                       <ArrowRight className="ml-2" size={20} />
-                    </Button> */}
+                    </Button> 
                     <AnimatedButton className="w-full" type="submit"/>
                   </form>
                 </CardContent>
@@ -300,7 +300,7 @@ export default function LandingPage() {
             </motion.div>
           </div>
         </motion.section>
-      </Element>
+      </Element> */}
     </div>
   )
 }
