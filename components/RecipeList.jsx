@@ -6,8 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { BookmarkPlus } from "lucide-react";
 import { motion } from "framer-motion";
 import RecipeModal from './RecipeModal';
+import { useSession } from "next-auth/react";
+import { useToast } from "@/components/hooks/use-toast";
 
 export default function RecipeList({ recipes }) {
+  const { data: session } = useSession();
+  const { toast } = useToast();
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [savedRecipes, setSavedRecipes] = useState([]);
 
@@ -15,16 +19,51 @@ export default function RecipeList({ recipes }) {
     return type === 'Veg' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600';
   };
 
-  const handleSave = (recipe, event) => {
+  const handleSave = async (recipe, event) => {
     event.stopPropagation();
-    setSavedRecipes((prev) => [...prev, recipe]);
-    // Here you would typically also save this to a database or local storage
+    if (!session) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to save recipes",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/saveRecipe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...recipe,
+          cuisines: recipe.cuisines || [] // Ensure cuisines are included
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Recipe saved",
+          description: "The recipe has been saved to your profile",
+        });
+      } else {
+        throw new Error('Failed to save recipe');
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to save the recipe",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
       {recipes.map((recipe, index) => (
-        <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer"  onClick={() => setSelectedRecipe(recipe)}>
+        <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer" onClick={() => setSelectedRecipe(recipe)}>
           <div className="relative h-48">
             <Image 
               src={recipe.image} 
@@ -51,21 +90,17 @@ export default function RecipeList({ recipes }) {
           <div className="p-4">
             <h3 className="text-xl font-bold mb-2 dark:text-white">{recipe.name}</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">{recipe.description}</p>
-            <div className="flex justify-between items-center">
-              {/* <Badge variant={recipe.type === 'Veg' ? 'success' : 'destructive'} className="dark:bg-opacity-80">
-                {recipe.type}
-              </Badge> */}
+            <div className="flex flex-wrap gap-2 mb-2">
               <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
                 {recipe.type}
               </Badge>
-              <span className="text-sm text-gray-500 dark:text-gray-400">{recipe.cookingTime}</span>
+              {recipe.cuisines && recipe.cuisines.map((cuisine, index) => (
+                <Badge key={index} variant="secondary">
+                  {cuisine}
+                </Badge>
+              ))}
             </div>
-            {/* <Button 
-              className="w-full mt-4"
-              onClick={() => setSelectedRecipe(recipe)}
-            >
-              View Details
-            </Button> */}
+            <span className="text-sm text-gray-500 dark:text-gray-400">{recipe.cookingTime}</span>
             <Button 
               className="w-full mt-4"
               onClick={(e) => {

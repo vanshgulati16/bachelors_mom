@@ -59,9 +59,9 @@ export default function Navbar() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {/* <DropdownMenuItem>
+                <DropdownMenuItem>
                   <Link href="/profile" className="w-full">Profile</Link>
-                </DropdownMenuItem> */}
+                </DropdownMenuItem>
                 {session.data?.user ? (
                   <DropdownMenuItem>
                     <button onClick={handleSignOut} className="w-full text-left">
@@ -97,9 +97,9 @@ export default function Navbar() {
               <Link className={getLinkClassName("/weekPlanner")} href="/weekPlanner">
                 Weekly Meal Planner
               </Link>
-              {/* <Link className={getLinkClassName("/profile")} href="/profile">
+              <Link className={getLinkClassName("/profile")} href="/profile">
                 Profile
-              </Link> */}
+              </Link>
               {session.data?.user ? (
                 <div>
                   <button

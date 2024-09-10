@@ -21,7 +21,7 @@ const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '
 
 const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala'];
 const cuisines  = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese'];
-const typeOfMeal  = ['Snacks', 'Meal', 'Munchies', 'Sweet Dish', 'Salads'];
+const typeOfMeal  = ['Snacks', 'Meal', 'Munchies', 'Sweet Dish', 'Salads', 'Soup'];
 
 
 export function RecipeGenerator() {
@@ -249,7 +249,7 @@ export function RecipeGenerator() {
             <Button 
               className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
               onClick={handleGenerateRecipe} 
-              disabled={isLoading || generatingImage || !ingredients || selectedSpices.length === 0 || selectedCuisines.length === 0}
+              disabled={isLoading || generatingImage || !ingredients}
             >
               {isLoading ? 'Simmering flavors...' : 'Find Your Mix'}
             </Button>

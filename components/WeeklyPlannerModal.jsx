@@ -20,33 +20,6 @@ export default function WeeklyPlannerModal({ dish, onClose }) {
     }
   }, [dish]);
 
-//   const fetchRecipe = async (dishName) => {
-//     setLoading(true);
-//     setError(null);
-//     try {
-//       const response = await fetch('/api/getRecipe', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ dish: dishName }),
-//       });
-      
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(`Failed to fetch recipe: ${response.status} ${response.statusText}. ${errorData.message || ''}`);
-//       }
-      
-//       const data = await response.json();
-//       setRecipe(data);
-//     } catch (err) {
-//       setError(`Failed to load recipe. Please try again. Error: ${err.message}`);
-//       console.error('Error fetching recipe:', err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
 const fetchRecipe = async (dishName) => {
     setLoading(true);
     setError(null);
@@ -124,51 +97,52 @@ const fetchRecipe = async (dishName) => {
 
   return (
     <Dialog open={!!dish} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>{dish}</DialogTitle>
           <DialogDescription>Recipe details</DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
-          {loading && (
+          {/* {loading && (
             <div className="flex justify-center items-center h-40">
               <Spinner />
             </div>
-          )}
-          {error && (
+          )} */}
+          {/* {error && (
             <div className="text-red-500 text-center">{error}</div>
-          )}
+          )} */}
           {recipe && (
             <div className="space-y-4">
-              {recipe.image && (
-                <div className="relative h-48 mb-4">
-                  <Image 
-                    src={recipe.image} 
-                    alt={recipe.name || 'Recipe image'}
-                    layout="fill"
-                    objectFit="cover"
-                  />
+                <div className="relative h-96">
+                  {recipe.image ? (
+                    <Image 
+                      src={recipe.image} 
+                      alt={recipe.name || 'Recipe image'}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-md"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-md">
+                      <span className="text-gray-500 dark:text-gray-400">No image available</span>
+                    </div>
+                  )}
+                  <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
+                        {recipe.type}
+                      </Badge>
+                      {recipe.cuisines && recipe.cuisines.map((cuisine, index) => (
+                        <Badge key={index} variant="secondary">
+                          {cuisine}
+                        </Badge>
+                      ))}
+                    </div>
+                    <span className="text-sm text-white bg-black bg-opacity-50 px-2 py-1 rounded">
+                      {recipe.cookingTime || 'Time not specified'}
+                    </span>
+                  </div>
                 </div>
-              )}
-              <div className="flex justify-between items-center">
-                {recipe.type && (
-                  <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
-                    {recipe.type}
-                  </Badge>
-                )}
-                {recipe.cookingTime && (
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{recipe.cookingTime}</span>
-                )}
-              </div>
-              {recipe.cuisines && recipe.cuisines.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {recipe.cuisines.map((cuisine, index) => (
-                    <Badge key={index} className="dark:bg-blue-800 dark:text-blue-100">
-                      {cuisine}
-                    </Badge>
-                  ))}
-                </div>
-              )}
               {recipe.ingredients && recipe.ingredients.length > 0 && (
                 <div>
                   <h4 className="font-bold dark:text-white">Ingredients:</h4>
@@ -189,9 +163,9 @@ const fetchRecipe = async (dishName) => {
                   </ol>
                 </div>
               )}
-              {recipe.source && (
+              {/* {recipe.source && (
                 <p className="dark:text-gray-300"><strong>Source:</strong> {recipe.source}</p>
-              )}
+              )} */}
             </div>
           )}
         </ScrollArea>
