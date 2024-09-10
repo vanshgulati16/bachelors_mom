@@ -33,6 +33,7 @@ import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toaster"
 import SessionWrapper from "@/components/SessionWrapper";
+import { Analytics } from "@vercel/analytics/react"
 
 const ebGaramond = EB_Garamond({ 
   subsets: ["latin"],
@@ -55,6 +56,7 @@ export default function RootLayout({ children }) {
     <SessionWrapper>
       <html lang="en">
         <body className={`pt-10 ${ebGaramond.variable} ${didactGothic.variable}`}>
+          <Analytics/>
           <Providers attribute="class" defaultTheme="light" enableSystem>
             <Navbar />
             <div>
