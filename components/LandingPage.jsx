@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Link as ScrollLink, Element } from 'react-scroll'
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,6 +9,9 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Utensils, CalendarDays, Refrigerator, Search, ChefHat, PartyPopper, ArrowRight, Check } from 'lucide-react'
 import { AnimatedButton } from './AnimatedButton'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation';
+import { useRef } from 'react';
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -26,6 +29,7 @@ const staggerChildren = {
 
 export default function LandingPage() {
   const [email, setEmail] = useState('')
+  const router = useRouter();
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth'
@@ -33,6 +37,50 @@ export default function LandingPage() {
       document.documentElement.style.scrollBehavior = 'auto'
     }
   }, [])
+
+  const FeatureBox = ({ title, items, route }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, amount: 0.3 });
+
+    return (
+      <motion.div 
+        ref={ref}
+        initial={{ opacity: 0, y: 50, border: '2px solid transparent' }}
+        animate={isInView ? 
+          { opacity: 1, y: 0, border: '2px solid transparent' } : 
+          { opacity: 0, y: 50, border: '2px solid transparent' }
+        }
+        whileHover={{ 
+          y: -8, 
+          border: '2px solid black',
+          transition: { duration: 0.3 }
+        }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="mb-16 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+        onClick={() => router.push(route)}
+      >
+        <motion.h3 className="mb-8 text-center text-3xl font-semibold text-primary">
+          {title}
+        </motion.h3>
+        <div className="grid gap-8 md:grid-cols-3">
+          {items.map((item, index) => (
+            <motion.div 
+              key={index} 
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+              className="text-center"
+            >
+              <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
+                <item.icon className="h-12 w-12 text-primary" />
+              </div>
+              <p className="text-lg text-secondary-foreground">{item.text}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-red-50">
@@ -70,7 +118,7 @@ export default function LandingPage() {
           >
             <ScrollLink to="features" smooth={true} duration={500}>
               <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                Explore Features
+                  Explore Features
               </Button>
             </ScrollLink>
             {/* <ScrollLink to="pricing" smooth={true} duration={500}>
@@ -132,57 +180,39 @@ export default function LandingPage() {
       </Element>
 
       {/* How It Works Section */}
-      <motion.section 
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerChildren}
-        className="min-h-screen flex items-center"
-      >
+      <section className="min-h-screen flex items-center">
         <div className="container mx-auto px-4 py-20">
-          <motion.h2 variants={fadeIn} className="mb-12 text-center text-4xl font-bold text-primary">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center text-4xl font-bold text-primary"
+          >
             How It Works
           </motion.h2>
-          <div className="mb-16">
-            <motion.h3 variants={fadeIn} className="mb-8 text-center text-3xl font-semibold text-primary">
-              Recipe Finder
-            </motion.h3>
-            <div className="grid gap-8 md:grid-cols-3">
-              {[
-                { icon: Refrigerator, text: "Input your available ingredients" },
-                { icon: Search, text: "Our app matches recipes to your ingredients" },
-                { icon: ChefHat, text: "Cook and enjoy your new culinary creations" }
-              ].map((item, index) => (
-                <motion.div key={index} variants={fadeIn} className="text-center">
-                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
-                    <item.icon className="h-12 w-12 text-primary" />
-                  </div>
-                  <p className="text-lg text-secondary-foreground">{item.text}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <motion.h3 variants={fadeIn} className="mb-8 text-center text-3xl font-semibold text-primary">
-              Weekly Planner
-            </motion.h3>
-            <div className="grid gap-8 md:grid-cols-3">
-              {[
-                { icon: CalendarDays, text: "Input your available ingredients for the week" },
-                { icon: Utensils, text: "Receive a tailored menu suggestion" },
-                { icon: PartyPopper, text: "No more 'Aaj kya khaoge?'" }
-              ].map((item, index) => (
-                <motion.div key={index} variants={fadeIn} className="text-center">
-                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
-                    <item.icon className="h-12 w-12 text-primary" />
-                  </div>
-                  <p className="text-lg text-secondary-foreground">{item.text}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          
+          <FeatureBox 
+            title="Recipe Finder"
+            route="/find"
+            items={[
+              { icon: Refrigerator, text: "Input your available ingredients" },
+              { icon: Search, text: "Our app matches recipes to your ingredients" },
+              { icon: ChefHat, text: "Cook and enjoy your new culinary creations" }
+            ]}
+          />
+
+          <FeatureBox 
+            title="Weekly Planner"
+            route="/weekPlanner"
+            items={[
+              { icon: CalendarDays, text: "Input your available ingredients for the week" },
+              { icon: Utensils, text: "Receive a tailored menu suggestion" },
+              { icon: PartyPopper, text: "No more 'Aaj kya khaoge?'" }
+            ]}
+          />
         </div>
-      </motion.section>
+      </section>
 
       {/* Pricing Section */}
       {/* <Element name="pricing">
