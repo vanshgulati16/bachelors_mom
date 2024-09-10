@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export default function RecipeModal({ recipe, onClose }) {
   if (!recipe) return null;
 
-  console.log("Recipe in modal:", recipe); // For debugging
+  // console.log("Recipe in modal:", recipe);
 
   const getTypeBadgeColor = (type) => {
     return type === 'Veg' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600';

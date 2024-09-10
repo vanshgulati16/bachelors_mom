@@ -41,15 +41,15 @@ const fetchRecipe = async (dishName) => {
       setRecipe(data);
 
       // If no image is available, generate one using AI
-      if (!data.image) {
-        const generatedImage = await generateImage(data);
-        if (generatedImage) {
-          setRecipe((prevRecipe) => ({
-            ...prevRecipe,
-            image: generatedImage,
-          }));
-        }
-      }
+      // if (!data.image) {
+      //   const generatedImage = await generateImage(data);
+      //   if (generatedImage) {
+      //     setRecipe((prevRecipe) => ({
+      //       ...prevRecipe,
+      //       image: generatedImage,
+      //     }));
+      //   }
+      // }
 
     } catch (err) {
       setError(`Failed to load recipe. Please try again. Error: ${err.message}`);
@@ -103,11 +103,11 @@ const fetchRecipe = async (dishName) => {
           <DialogDescription>Recipe details</DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
-          {/* {loading && (
+          {loading && (
             <div className="flex justify-center items-center h-40">
               <Spinner />
             </div>
-          )} */}
+          )}
           {/* {error && (
             <div className="text-red-500 text-center">{error}</div>
           )} */}

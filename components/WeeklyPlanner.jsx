@@ -3,12 +3,10 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, X } from "lucide-react";
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
+import { format, differenceInDays, startOfMonth, endOfMonth, addDays } from 'date-fns';
 import { Input } from './ui/input';
 import MultiSelect from './MultiSelect';
 import { toast } from "@/components/hooks/use-toast";
@@ -19,17 +17,20 @@ import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
 import ReviewButton from './ReviewButton';
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
-
 const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese'];
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
 const dietaryRestrictions = ['Non-Vegetarian', 'Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo', 'Low-Carb', 'Halal', 'Kosher'];
+const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala'];
 
 export default function WeeklyPlanner() {
   const [glossaryBought, setGlossaryBought] = useState('');
   const [profession, setProfession] = useState('');
   const [spicesAvailable, setSpicesAvailable] = useState('');
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [additionalSpices, setAdditionalSpices] = useState('');
+  const [dateRange, setDateRange] = useState({ from: null, to: null });
+  const currentMonth = new Date();
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(currentMonth);
   const [planDuration, setPlanDuration] = useState('week');
   const [selectedDietaryRestrictions, setSelectedDietaryRestrictions] = useState([]);
   const [selectedCuisines, setSelectedCuisines] = useState([]);
@@ -40,92 +41,66 @@ export default function WeeklyPlanner() {
 
   const {data: session} = useSession() 
 
-  const handleDateSelect = (date) => {
-    setSelectedDate(date);
-    setPlanDuration('week');
-  };
-
-  const handleMonthSelect = (date) => {
-    setSelectedDate(date);
-    setPlanDuration('month');
+  const handleDateRangeSelect = (range) => {
+    if (range?.from) {
+      const maxEndDate = addDays(range.from, 6); // 7 days including the start date
+      const newTo = range.to && range.to > maxEndDate ? maxEndDate : range.to;
+      
+      setDateRange({ from: range.from, to: newTo });
+      
+      if (newTo) {
+        const diffInDays = differenceInDays(newTo, range.from) + 1;
+        setPlanDuration(diffInDays <= 7 ? 'week' : 'week'); // Always set to 'week' as it's max 7 days
+      } else {
+        setPlanDuration('');
+      }
+    } else {
+      setDateRange({ from: null, to: null });
+      setPlanDuration('');
+    }
   };
 
   const clearDateSelection = () => {
-    setSelectedDate(null);
+    setDateRange({ from: null, to: null });
     setPlanDuration('');
   };
 
   const formatDateRange = () => {
-    if (!selectedDate) return '';
-    if (planDuration === 'week') {
-      const start = startOfWeek(selectedDate);
-      const end = endOfWeek(selectedDate);
-      return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`;
-    } else if (planDuration === 'month') {
-      const start = startOfMonth(selectedDate);
-      const end = endOfMonth(selectedDate);
-      return `${format(start, 'MMMM yyyy')}`;
-    }
-    return '';
+    if (!dateRange.from) return '';
+    if (!dateRange.to) return format(dateRange.from, 'MMM d, yyyy');
+    return `${format(dateRange.from, 'MMM d')} - ${format(dateRange.to, 'MMM d, yyyy')}`;
   };
 
   const generateMealPlan = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const dateRange = formatDateRange();
-      const prompt = `Generate a ${planDuration === 'week' ? '7-day' : '30-day'} meal plan for ${dateRange} based on the following:
-        Groceries: ${glossaryBought}
-        Spices available: ${spicesAvailable}
-        Dietary restrictions: ${selectedDietaryRestrictions.join(', ')}
-        Cuisines: ${selectedCuisines.join(', ')}
-        Meal times: ${selectedMealTimes.join(', ')}
-        Profession: ${profession}
-
-        For each day, provide meals for the selected meal times. Include a brief description and main ingredients for each meal.
-        Format the response as a JSON array of objects, where each object represents a day:
-        [
-          {
-            "day": 1,
-            "date": "YYYY-MM-DD",
-            "meals": [
-              {
-                "mealTime": "Breakfast",
-                "dish": "Dish name",
-                "description": "Brief description",
-                "mainIngredients": ["ingredient1", "ingredient2"]
-                "time": "time to make the dish"
-              }
-            ]
-          }
-        ]
-        `;
-
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const result = await model.generateContent(prompt);
-      let responseText = await result.response.text();
-    //   const response = await result.response;
-    //   const responseText = response.text();
-      responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
-      console.log('API Response:', responseText);
-      
-      let generatedMealPlan;
-      try {
-        // Attempt to parse the JSON response
-        generatedMealPlan = JSON.parse(responseText);
-        console.log(generatedMealPlan)
-      } catch (parseError) {
-        console.error('Error parsing JSON:', parseError);
-        console.error('Raw response:', responseText);
-        throw new Error(`Failed to parse the generated meal plan. Error: ${parseError.message}`);
+      const formattedDateRange = formatDateRange();
+      const response = await fetch('/api/getWeeklyRecipe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          dateRange: formattedDateRange,
+          planDuration,
+          glossaryBought,
+          spicesAvailable,
+          additionalSpices,
+          selectedDietaryRestrictions,
+          selectedCuisines,
+          selectedMealTimes,
+          profession
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate meal plan');
       }
-
-      if (!Array.isArray(generatedMealPlan) || generatedMealPlan.length === 0) {
-        console.error('Invalid meal plan structure:', generatedMealPlan);
-        throw new Error('The generated meal plan is not in the expected format. Please try again.');
-      }
-
-      setMealPlan(generatedMealPlan);
+  
+      const data = await response.json();
+      setMealPlan(data.mealPlan);
       toast({
         title: "Meal Plan Generated",
         description: "Your meal plan has been successfully created!",
@@ -292,6 +267,16 @@ export default function WeeklyPlanner() {
             </div>
 
             <div>
+              <Label className="dark:text-white">Spices</Label>
+              <MultiSelect
+                options={basicSpices}
+                selectedOptions={spicesAvailable}
+                onChange={setSpicesAvailable}
+                placeholder="Choose spices"
+              />
+            </div>
+
+            {/* <div>
               <Label htmlFor="spices" className="dark:text-white">Spices Available</Label>
               <Textarea
                 id="spices"
@@ -299,6 +284,17 @@ export default function WeeklyPlanner() {
                 value={spicesAvailable}
                 onChange={(e) => setSpicesAvailable(e.target.value)}
                 className="dark:bg-gray-800 dark:text-white"
+              />
+            </div> */}
+
+            <div>
+              <Label htmlFor="additionalSpices" className="dark:text-white">Additional Spices (Optional)</Label>
+              <Textarea
+                id="additionalSpices"
+                placeholder="Enter additional spices (e.g., chicken masala, oregano, 5 season spices)"
+                value={additionalSpices}
+                onChange={(e) => setAdditionalSpices(e.target.value)}
+                className="dark:bg-gray-700 dark:text-white"
               />
             </div>
 
@@ -321,24 +317,31 @@ export default function WeeklyPlanner() {
                     <Button
                       variant="outline"
                       className={`w-[280px] justify-start text-left font-normal ${
-                        !selectedDate && "text-muted-foreground"
+                        !dateRange.from && "text-muted-foreground"
                       }`}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {selectedDate ? formatDateRange() : <span>Select week/month</span>}
+                      {dateRange.from ? formatDateRange() : <span>Select up to 7 days</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={handleDateSelect}
-                      onMonthSelect={handleMonthSelect}
+                      mode="range"
+                      selected={dateRange}
+                      onSelect={handleDateRangeSelect}
+                      month={currentMonth}
+                      fromDate={monthStart}
+                      toDate={monthEnd}
                       initialFocus
+                      disabled={(date) => 
+                        (dateRange.from && date > addDays(dateRange.from, 6)) ||
+                        date < monthStart ||
+                        date > monthEnd
+                      }
                     />
                   </PopoverContent>
                 </Popover>
-                {selectedDate && (
+                {dateRange.from && (
                   <Button
                     variant="ghost"
                     size="icon"
@@ -384,7 +387,7 @@ export default function WeeklyPlanner() {
             <Button 
               className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
               onClick={generateMealPlan} 
-              disabled={isLoading || !selectedDate}
+              disabled={isLoading || !dateRange.from || !dateRange.to}
             >
               {isLoading ? 'Generating Plan...' : 'Generate Meal Plan'}
             </Button>

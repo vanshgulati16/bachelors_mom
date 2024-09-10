@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // import { Moon, Sun } from "lucide-react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useTheme } from "next-themes";
 import RecipeList from './RecipeList';
 import MultiSelect from '@/components/MultiSelect';
@@ -17,7 +17,7 @@ import { Spinner } from './Spinner';
 import ReviewButton from './ReviewButton';
 
 // Initialize the Google Generative AI with your API key
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
+// const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
 
 const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala'];
 const cuisines  = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese'];
@@ -68,64 +68,54 @@ export function RecipeGenerator() {
       setGeneratingImage(false);
     }
   };
-  
+
   const handleGenerateRecipe = async () => {
     setIsLoading(true);
+  // setError(null);
     try {
-      const prompt = `I have ${ingredients}, ${selectedSpices.join(', ')}, ${additionalSpices}. Suggest 3 dishes I can make at home quickly (within ${cookingTime}) with their recipes and sources. The cuisines is ${selectedCuisines} and the type of meal is ${selectedTypeOfMeal}, for this meal of the day ${selectedMealTime}.For each dish, provide:
-      1. Dish name
-      2. Brief description
-      3. Ingredients list
-      4. Step-by-step recipe
-      5. Estimated cooking time
-      6. Source or origin of the recipe with link
-      7. Whether the dish is Veg or Non Veg
-
-      Format the response in following structure:
-      [
-        {
-          "name": "Dish Name",
-          "description": "Brief description",
-          "ingredients": ["ingredient1", "ingredient2", ...],
-          "recipe": ["step1", "step2", ...],
-          "cookingTime": "Estimated time",
-          "source": "Recipe source or origin",
-          "cuisines": ["cuisine1", "cuisine2", ...],
-          "type": "Veg" or "Non-Veg"
+      const response = await fetch('/api/getRecipeMix&Match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        ...
-      ]`;
-
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      let generatedRecipes = [];
-      try {
-        generatedRecipes = JSON.parse(response.text());
-        console.log('API Response:', generatedRecipes);
-      } catch (error) {
-        console.error('Error parsing JSON:', error);
-        generatedRecipes = [{ name: 'Error', description: 'Failed to parse recipe data. Please try again.' }];
-      }
-
-      // sending the recipe name to the ai to generate image 
-      // commented because token finished have to pay for more...
-      // const recipesWithImages = await Promise.all(generatedRecipes.map(async (recipe) => {
-      //   const imageUrl = await generateImage(recipe);
-      //   return { ...recipe, image: imageUrl };
-      // }));
-
-      // setRecipes(recipesWithImages);
-      // console.log(recipes)
-      setRecipes(generatedRecipes)
+        body: JSON.stringify({
+          ingredients,
+          selectedSpices,
+          additionalSpices,
+          cookingTime,
+          selectedCuisines,
+          selectedTypeOfMeal,
+          selectedMealTime
+        }),
+      });
       
-    } catch (error) {
-      console.error('Error generating recipes:', error);
-      setRecipes([{ name: 'Error', description: 'Sorry, there was an error generating the recipes. Please try again.' }]);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to fetch recipe: ${response.status} ${response.statusText}. ${errorData.message || ''}`);
+      }
+      
+      const data = await response.json();
+      setRecipes(data);
+
+      // If no image is available, generate one using AI
+      // if (!data.image) {
+      //   const generatedImage = await generateImage(data);
+      //   if (generatedImage) {
+      //     setRecipes((prevRecipe) => ({
+      //       ...prevRecipe,
+      //       image: generatedImage,
+      //     }));
+      //   }
+      // }
+
+    } catch (err) {
+      // setError(`Failed to load recipe. Please try again. Error: ${err.message}`);
+      console.error('Error fetching recipe:', err);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   // const toggleTheme = () => {
   //   setTheme(theme === 'dark' ? 'light' : 'dark');

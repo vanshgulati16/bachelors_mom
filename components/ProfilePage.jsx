@@ -22,9 +22,9 @@ export default function ProfilePage() {
     }
   }, [session]);
 
-  useEffect(() => {
-    console.log("Selected Recipe:", selectedRecipe);
-  }, [selectedRecipe]);
+  // useEffect(() => {
+  //   console.log("Selected Recipe:", selectedRecipe);
+  // }, [selectedRecipe]);
 
   const fetchSavedRecipes = async () => {
     setIsLoading(true);
