@@ -13,7 +13,7 @@ function BrandLogo() {
                 className="w-auto h-10 rounded-xl overflow-clip"
             />
             <div
-                className=" text-theme-blue-dark text-2xl"
+                className="text-theme-blue-dark text-2xl"
             style={{fontWeight:900}}
             >Dish Dash Momzie
             </div>

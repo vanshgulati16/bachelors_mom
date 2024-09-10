@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
     <SessionWrapper>
       <html lang="en">
         <body className={`pt-10 ${ebGaramond.variable} ${didactGothic.variable}`}>
-          <Providers attribute="class" defaultTheme="system" enableSystem>
+          <Providers attribute="class" defaultTheme="light" enableSystem>
             <Navbar />
             <div>
               <main>
