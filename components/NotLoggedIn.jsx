@@ -3,10 +3,18 @@ import { signIn } from 'next-auth/react';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
+
 
 const NotLoggedInComponent = () => {
+  // const handleLogin = () => {
+  //   signIn('google', { callbackUrl: '/' });
+  // };
+  const pathname = usePathname();
+
   const handleLogin = () => {
-    signIn('google', { callbackUrl: '/' });
+    const callbackUrl = pathname || '/';
+    signIn('google', { callbackUrl });
   };
 
   return (
