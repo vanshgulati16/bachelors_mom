@@ -20,7 +20,7 @@ import ReviewButton from './ReviewButton';
 // const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
 
 const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala'];
-const cuisines  = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese'];
+const cuisines  = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
 const typeOfMeal  = ['Snacks', 'Meal', 'Munchies', 'Sweet Dish', 'Salads', 'Soup'];
 
 

@@ -7,11 +7,7 @@ export async function POST(req) {
     const { ingredients, selectedSpices, additionalSpices, cookingTime, selectedCuisines, selectedTypeOfMeal, selectedMealTime } = await req.json();
 
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-     // First define
-//  const startTime = process.hrtime();
- // To start it:
-//  const elapsed = process.hrtime(startTime);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
  
     const prompt = `I have ${ingredients}, ${selectedSpices.join(', ')}, ${additionalSpices}. Suggest 3 dishes I can make at home quickly (within ${cookingTime}) with their recipes and sources. The cuisines is ${selectedCuisines} and the type of meal is ${selectedTypeOfMeal}, for this meal of the day ${selectedMealTime}.For each dish, provide:
       1. Dish name
@@ -35,7 +31,8 @@ export async function POST(req) {
           "type": "Veg" or "Non-Veg"
         },
         ...
-      ]`;
+      ]
+      Provide only the JSON array without any additional text.`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -44,31 +41,29 @@ export async function POST(req) {
     // console.log('Raw AI response:', responseText);
 
     // Remove any potential markdown code block syntax and trim whitespace
-    let cleanedResponseText = responseText.replace(/```json\s*|\s*```/g, '').trim();
+    let cleanedResponseText = responseText.replace(/```json\s*|\s*```/g, '').replace(/,\s*([\]}])/g, '$1').trim();
+
 
     // Attempt to parse the JSON
     let recipeJson;
     try {
       recipeJson = JSON.parse(cleanedResponseText);
       // console.log(recipeJson)
-          // To end it:
-    // const responseTimeInMs = elapsed[0] * 1000 + elapsed[1] / 1000000;
-    // console.log('Response Time:', responseTimeInMs, 'ms');
     } catch (parseError) {
       console.error('JSON Parse Error:', parseError);
       
       // If parsing fails, attempt to find and extract the JSON array
-      const jsonArrayMatch = cleanedResponseText.match(/\[[\s\S]*\]/);
-      if (jsonArrayMatch) {
-        try {
-          recipeJson = JSON.parse(jsonArrayMatch[0]);
-        } catch (secondParseError) {
-          console.error('Second JSON Parse Error:', secondParseError);
-          throw new Error('Failed to parse the generated recipe data');
-        }
-      } else {
-        throw new Error('Failed to extract valid JSON from the response');
-      }
+      // const jsonArrayMatch = cleanedResponseText.match(/\[[\s\S]*\]/);
+      // if (jsonArrayMatch) {
+      //   try {
+      //     recipeJson = JSON.parse(jsonArrayMatch[0]);
+      //   } catch (secondParseError) {
+      //     console.error('Second JSON Parse Error:', secondParseError);
+      //     throw new Error('Failed to parse the generated recipe data');
+      //   }
+      // } else {
+      //   throw new Error('Failed to extract valid JSON from the response');
+      // }
     }
 
     // Ensure recipeJson is an array
