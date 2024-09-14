@@ -17,10 +17,10 @@ import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
 import ReviewButton from './ReviewButton';
 
-const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese'];
+const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
 const dietaryRestrictions = ['Non-Vegetarian', 'Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo', 'Low-Carb', 'Halal', 'Kosher'];
-const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala'];
+const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala', 'Ginger-Garlic Paste'];
 
 export default function WeeklyPlanner() {
   const [glossaryBought, setGlossaryBought] = useState('');

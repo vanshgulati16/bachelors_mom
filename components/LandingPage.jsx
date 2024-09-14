@@ -12,6 +12,7 @@ import { AnimatedButton } from './AnimatedButton'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
+import Footer from './Footer'
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -170,7 +171,7 @@ export default function LandingPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-lg text-secondary-foreground">Plan your perfect week menu with ease. Our smart algorithm suggests dishes and snacks tailored according to your availabbilty and profession.</p>
+                    <p className="text-lg text-secondary-foreground">Plan your perfect week menu with ease. Our smart algorithm suggests dishes and snacks tailored according to your availabilty and profession.</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -331,6 +332,14 @@ export default function LandingPage() {
           </div>
         </motion.section>
       </Element> */}
+      <motion.section 
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggerChildren}
+        >
+          <Footer/>
+        </motion.section>
     </div>
   )
 }
