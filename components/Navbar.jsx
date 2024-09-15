@@ -62,6 +62,9 @@ export default function Navbar() {
                 <DropdownMenuItem>
                   <Link href="/profile" className="w-full">Profile</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/grocery-bag" className="w-full">Grocery Bag</Link>
+                </DropdownMenuItem>
                 {session.data?.user ? (
                   <DropdownMenuItem>
                     <button onClick={handleSignOut} className="w-full text-left">
