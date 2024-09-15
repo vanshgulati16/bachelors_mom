@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,8 @@ import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
 import { Spinner } from './Spinner';
 import ReviewButton from './ReviewButton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
 
 // Initialize the Google Generative AI with your API key
 // const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
@@ -39,7 +41,55 @@ export function RecipeGenerator() {
 
   const {data: session} = useSession()
 
-  // Hitting the AI image generation api
+  const [inventoryIngredients, setInventoryIngredients] = useState([]);
+  const [inventorySpices, setInventorySpices] = useState([]);
+  const [isInventoryDialogOpen, setIsInventoryDialogOpen] = useState(false);
+  const [inventoryType, setInventoryType] = useState('');
+  const [selectedInventoryItems, setSelectedInventoryItems] = useState([]);
+
+  // useEffect(() => {
+  //   fetchInventory();
+  // }, []);
+
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchInventory();
+      setIsLoading(false);
+    };
+
+    if (session) {
+      loadData();
+    } else {
+      setIsLoading(false);
+    }
+  }, [session]);
+
+  const fetchInventory = async () => {
+    try {
+      const response = await fetch('/api/groceries');
+      const data = await response.json();
+      setInventoryIngredients(data.filter(item => item.category === 'ingredient').map(item => item.name));
+      setInventorySpices(data.filter(item => item.category === 'spice').map(item => item.name));
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+    }
+  };
+
+   const openInventoryDialog = (type) => {
+    setInventoryType(type);
+    setSelectedInventoryItems([]);
+    setIsInventoryDialogOpen(true);
+  };
+
+  const handleUseFromInventory = () => {
+    if (inventoryType === 'ingredients') {
+      setIngredients(selectedInventoryItems);
+    } else if (inventoryType === 'spices') {
+      setSelectedSpices(selectedInventoryItems);
+    }
+    setIsInventoryDialogOpen(false);
+  };
+  // AI Generate Image
   const generateImage = async (recipe) => {
     try {
       setGeneratingImage(true);
@@ -165,8 +215,11 @@ export function RecipeGenerator() {
                 placeholder="Enter ingredients (e.g., tomato, onion, paneer)"
                 value={ingredients}
                 onChange={(e) => setIngredients(e.target.value)}
-                className="dark:bg-gray-700 dark:text-white"
+                className="dark:bg-gray-700 dark:text-white mb-2"
               />
+             <Button onClick={() => openInventoryDialog('ingredients')} variant="outline" size="sm">
+              Use from Inventory
+            </Button>
             </div>
 
             <div>
@@ -176,7 +229,13 @@ export function RecipeGenerator() {
                 selectedOptions={selectedSpices}
                 onChange={setSelectedSpices}
                 placeholder="Choose spices"
+                className="mb-2"
               />
+              <div className="mt-2">
+              <Button onClick={() => openInventoryDialog('spices')} variant="outline" size="sm">
+                Use from Inventory
+              </Button>
+            </div>
             </div>
 
             <div>
@@ -245,6 +304,24 @@ export function RecipeGenerator() {
             </Button>
           </div>
         </div>
+        <Dialog open={isInventoryDialogOpen} onOpenChange={setIsInventoryDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select {inventoryType} from Inventory</DialogTitle>
+            </DialogHeader>
+            {isLoading ? <Spinner/> : (
+            <MultiSelect
+              options={inventoryType === 'ingredients' ? inventoryIngredients : inventorySpices}
+              selectedOptions={selectedInventoryItems}
+              onChange={setSelectedInventoryItems}
+              placeholder={`Choose ${inventoryType}`}
+            />
+            )}
+            <DialogFooter>
+              <Button onClick={handleUseFromInventory}>Done</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
       ) : (
         <NotLoggedInComponent/>

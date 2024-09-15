@@ -12,6 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ShoppingBag } from 'lucide-react'
+
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -63,7 +65,12 @@ export default function Navbar() {
                   <Link href="/profile" className="w-full">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link href="/grocery-bag" className="w-full">Grocery Bag</Link>
+                  <Link href="/grocery-bag" className="w-full">
+                    <div className="flex items-center">
+                      <ShoppingBag className="w-4 h-4 mr-1" />
+                      Inventory
+                    </div>
+                  </Link>
                 </DropdownMenuItem>
                 {session.data?.user ? (
                   <DropdownMenuItem>
@@ -99,6 +106,12 @@ export default function Navbar() {
               {/* <Link className=" py-1 hover:text-black text-gray-500" href="/party">Party Planner</Link> */}
               <Link className={getLinkClassName("/weekPlanner")} href="/weekPlanner">
                 Weekly Meal Planner
+              </Link>
+              <Link className={getLinkClassName("/Inventory")} href="/grocery-bag">
+               <div className="flex items-center justify-center">
+                    <ShoppingBag className="w-4 h-4 mr-1" />
+                    Inventory
+                  </div>
               </Link>
               <Link className={getLinkClassName("/profile")} href="/profile">
                 Profile

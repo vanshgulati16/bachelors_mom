@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/hooks/use-toast";
 import { Pencil, X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import NotLoggedInComponent from './NotLoggedIn';
 
 const measurements = ['kg', 'g', 'L', 'mL', 'oz', 'lb', 'cup', 'tbsp', 'tsp', 'piece'];
 
@@ -16,6 +18,7 @@ export default function GroceryBag() {
   const [newCategory, setNewCategory] = useState('ingredient');
   const { toast } = useToast();
   const [editingId, setEditingId] = useState(null);
+  const {data: session} = useSession()
 
   useEffect(() => {
     fetchGroceries();
@@ -100,7 +103,9 @@ export default function GroceryBag() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <>
+    {session ? (
+    <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Inventory</h1>
       <form onSubmit={editingId ? handleUpdateGrocery : handleAddGrocery} className="mb-4 flex flex-col sm:flex-row gap-2">
         <Input
@@ -148,38 +153,51 @@ export default function GroceryBag() {
       </form>
       <div>
         <h2 className="text-xl font-semibold mb-2">Ingredients</h2>
-        {groceries.filter(g => g.category === 'ingredient').map((grocery) => (
-          <div key={grocery._id} className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 p-2 border rounded">
-            <span className="mb-2 sm:mb-0">{grocery.name} - {grocery.quantity} {grocery.measurement}</span>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => handleModifyGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
-                <Pencil className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button variant="destructive" onClick={() => handleDeleteGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
-                <X className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
+        {groceries.filter(g => g.category === 'ingredient').length > 0 ? (
+          groceries.filter(g => g.category === 'ingredient').map((grocery) => (
+            <div key={grocery._id} className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 p-2 border rounded">
+              <span className="mb-2 sm:mb-0">{grocery.name} - {grocery.quantity} {grocery.measurement}</span>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => handleModifyGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button variant="destructive" onClick={() => handleDeleteGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
+                  <X className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-gray-500 italic">No Ingredients added yet</p>
+        )}
+        
         <h2 className="text-xl font-semibold mb-2 mt-4">Spices</h2>
-        {groceries.filter(g => g.category === 'spice').map((grocery) => (
-          <div key={grocery._id} className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 p-2 border rounded">
-            <span className="mb-2 sm:mb-0">{grocery.name} - {grocery.quantity} {grocery.measurement}</span>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => handleModifyGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
-                <Pencil className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button variant="destructive" onClick={() => handleDeleteGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
-                <X className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
+        {groceries.filter(g => g.category === 'spice').length > 0 ? (
+          groceries.filter(g => g.category === 'spice').map((grocery) => (
+            <div key={grocery._id} className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 p-2 border rounded">
+              <span className="mb-2 sm:mb-0">{grocery.name} - {grocery.quantity} {grocery.measurement}</span>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => handleModifyGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button variant="destructive" onClick={() => handleDeleteGrocery(grocery._id)} className="flex-grow sm:flex-grow-0">
+                  <X className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-gray-500 italic">No Spices added yet</p>
+        )}
       </div>
     </div>
+    ) : (
+        <NotLoggedInComponent/>
+    )}
+    </>
   );
 }

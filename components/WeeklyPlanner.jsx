@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +16,7 @@ import Loadingtext from './LoadingText';
 import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
 import ReviewButton from './ReviewButton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
@@ -38,8 +39,56 @@ export default function WeeklyPlanner() {
   const [mealPlan, setMealPlan] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [inventoryIngredients, setInventoryIngredients] = useState([]);
+  const [inventorySpices, setInventorySpices] = useState([]);
+  const [isInventoryDialogOpen, setIsInventoryDialogOpen] = useState(false);
+  const [inventoryType, setInventoryType] = useState('');
+  const [selectedInventoryItems, setSelectedInventoryItems] = useState([]);
 
   const {data: session} = useSession() 
+
+  // useEffect(() => {
+  //   fetchInventory();
+  // }, []);
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchInventory();
+      setIsLoading(false);
+    };
+
+    if (session) {
+      loadData();
+    } else {
+      setIsLoading(false);
+    }
+  }, [session]);
+
+
+  const fetchInventory = async () => {
+    try {
+      const response = await fetch('/api/groceries');
+      const data = await response.json();
+      setInventoryIngredients(data.filter(item => item.category === 'ingredient').map(item => item.name));
+      setInventorySpices(data.filter(item => item.category === 'spice').map(item => item.name));
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+    }
+  };
+
+  const openInventoryDialog = (type) => {
+    setInventoryType(type);
+    setSelectedInventoryItems([]);
+    setIsInventoryDialogOpen(true);
+  };
+
+  const handleUseFromInventory = () => {
+    if (inventoryType === 'ingredients') {
+      setGlossaryBought(selectedInventoryItems);
+    } else if (inventoryType === 'spices') {
+      setSpicesAvailable(selectedInventoryItems);
+    }
+    setIsInventoryDialogOpen(false);
+  };
 
   const handleDateRangeSelect = (range) => {
     if (range?.from) {
@@ -262,8 +311,11 @@ export default function WeeklyPlanner() {
                 placeholder="Enter Groceries (e.g., tomato, onion, paneer)"
                 value={glossaryBought}
                 onChange={(e) => setGlossaryBought(e.target.value)}
-                className="dark:bg-gray-800 dark:text-white"
+                className="dark:bg-gray-800 dark:text-white mb-2"
               />
+              <Button onClick={() => openInventoryDialog('ingredients')} variant="outline" size="sm">
+              Use from Inventory
+            </Button>
             </div>
 
             <div>
@@ -273,19 +325,14 @@ export default function WeeklyPlanner() {
                 selectedOptions={spicesAvailable}
                 onChange={setSpicesAvailable}
                 placeholder="Choose spices"
+                className="mb-2"
               />
+              <div className='mt-2'>
+              <Button onClick={() => openInventoryDialog('spices')} variant="outline" size="sm">
+                Use from Inventory
+              </Button>
+              </div>
             </div>
-
-            {/* <div>
-              <Label htmlFor="spices" className="dark:text-white">Spices Available</Label>
-              <Textarea
-                id="spices"
-                placeholder="Enter Spices (e.g., salt, pepper, red chilli powder)"
-                value={spicesAvailable}
-                onChange={(e) => setSpicesAvailable(e.target.value)}
-                className="dark:bg-gray-800 dark:text-white"
-              />
-            </div> */}
 
             <div>
               <Label htmlFor="additionalSpices" className="dark:text-white">Additional Spices (Optional)</Label>
@@ -393,6 +440,24 @@ export default function WeeklyPlanner() {
             </Button>
           </div>
         </div>
+        <Dialog open={isInventoryDialogOpen} onOpenChange={setIsInventoryDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Select {inventoryType} from Inventory</DialogTitle>
+          </DialogHeader>
+          {isLoading ? <Spinner/> : (
+          <MultiSelect
+            options={inventoryType === 'ingredients' ? inventoryIngredients : inventorySpices}
+            selectedOptions={selectedInventoryItems}
+            onChange={setSelectedInventoryItems}
+            placeholder={`Choose ${inventoryType}`}
+          />
+          )}
+          <DialogFooter>
+            <Button onClick={handleUseFromInventory}>Done</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       </div>
     ) : (
       <NotLoggedInComponent/>
