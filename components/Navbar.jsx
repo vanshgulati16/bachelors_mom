@@ -32,7 +32,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow-md">
+    <nav className="fixed top-0 py-1 left-0 w-full z-50 border-b bg-white dark:bg-gray-800 shadow-md">
       <div className="mx-auto px-3">
         <div className="flex justify-between">
           <div className="flex">
