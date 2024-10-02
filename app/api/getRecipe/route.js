@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   try {
-    const { dish, servings } = await req.json();
+    const body = await req.json();
+    // console.log('Received body:', body);
+
+    const { dish } = body;
 
     if (!dish) {
       return NextResponse.json({ message: 'Dish name is required' }, { status: 400 });
@@ -12,16 +15,16 @@ export async function POST(req) {
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
-    const prompt = `Generate a recipe for ${dish} accounting for ${servings} servings. Include the following information:
+    const prompt = `Generate a recipe for ${dish} according to 2 people. Include the following information:
       - Name of the dish
       - Brief description
       - Type (Veg or Non-Veg)
       - Cooking time
       - Cuisines (list)
-      - Ingredients (list)
+      - Ingredients (list, with quantities adjusted for 2 people)
       - Instructions (numbered steps)
       - Source (if applicable)
-      - Servings (for how many people)
+      - Servings (for 2 people)
 
       Format the response as a JSON object with the following structure:
       {
@@ -33,7 +36,7 @@ export async function POST(req) {
         "ingredients": ["Ingredient1", "Ingredient2"],
         "instructions": ["Step 1", "Step 2"],
         "source": "Source of the recipe (if applicable)",
-        "servings": "for how many people"
+        "servings": "for 2-3 people"
       }`;
 
     const result = await model.generateContent(prompt);

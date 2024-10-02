@@ -146,6 +146,7 @@ const DayCard = ({ day, onChangeMeals }) => {
       </CardContent>
       <WeeklyPlannerModal 
         dish={recipeToView} 
+        // servings={recipeToView.servings}
         onClose={() => setRecipeToView(null)} 
       />
     </Card>

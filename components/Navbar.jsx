@@ -48,6 +48,9 @@ export default function Navbar() {
             <Link href="/weekPlanner" className={getLinkClassName("/weekPlanner")}>
               Week Meal Planner
             </Link>
+            <Link className={getLinkClassName("/curation")} href="/curation">
+              Curation
+            </Link>
           </div>
           <div className="hidden md:flex gap-2 items-center justify-center font-bold">
             {session.data?.user && (
@@ -106,6 +109,9 @@ export default function Navbar() {
               {/* <Link className=" py-1 hover:text-black text-gray-500" href="/party">Party Planner</Link> */}
               <Link className={getLinkClassName("/weekPlanner")} href="/weekPlanner">
                 Weekly Meal Planner
+              </Link>
+              <Link className={getLinkClassName("/curation")} href="/curation">
+                Curation
               </Link>
               <Link className={getLinkClassName("/Inventory")} href="/grocery-bag">
                <div className="flex items-center justify-center">

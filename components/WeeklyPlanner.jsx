@@ -179,7 +179,7 @@ export default function WeeklyPlanner() {
     {session ? (
       <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800 relative">
         {/* Left side - Output */}
-        <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 md:pb-6">
+        <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 pt-10 md:pb-6">
           <div className='flex flex-row justify-between mb-4'>
             <h2 className="text-2xl font-bold dark:text-white">Your Meal Plan</h2>
             <ReviewButton/>

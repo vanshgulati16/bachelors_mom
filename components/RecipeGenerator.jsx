@@ -176,9 +176,9 @@ export function RecipeGenerator() {
   return (
     <>
       {session ? (
-        <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800 relative">
+        <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800 relative overflow-hidden">
           {/* Left side - Output */}
-          <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 md:pb-6">
+          <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 pt-10 md:pb-6">
             <div className='flex flex-row justify-between'>
               <h2 className="text-2xl font-bold mb-4 dark:text-white">Find your match</h2>
               <ReviewButton/>

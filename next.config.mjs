@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['lh3.googleusercontent.com'],
+        domains: ['lh3.googleusercontent.com', 'i.pinimg.com'],
     },
     env: {
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

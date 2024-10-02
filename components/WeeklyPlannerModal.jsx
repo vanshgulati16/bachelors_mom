@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from './Spinner';
 
-export default function WeeklyPlannerModal({ dish, onClose }) {
+export default function WeeklyPlannerModal({ dish, servings, onClose }) {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [generatingImage, setGeneratingImage] = useState(false);
@@ -31,7 +31,7 @@ const fetchRecipe = async (dishName) => {
         },
         body: JSON.stringify({ dish: dishName }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`Failed to fetch recipe: ${response.status} ${response.statusText}. ${errorData.message || ''}`);
@@ -39,7 +39,7 @@ const fetchRecipe = async (dishName) => {
       
       const data = await response.json();
       setRecipe(data);
-
+      
       // If no image is available, generate one using AI
       // if (!data.image) {
       //   const generatedImage = await generateImage(data);
