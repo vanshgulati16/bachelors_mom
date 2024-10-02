@@ -8,13 +8,15 @@ import { motion } from "framer-motion";
 import RecipeModal from "@/components/RecipeModal";
 import { useSession } from "next-auth/react";
 import NotLoggedInComponent from "@/components/NotLoggedIn";
-import {Spinner} from "@/components/Spinner";
+import { Spinner } from "@/components/Spinner";
+import SavedMealPlan from "@/components/SavedMealPlan";
 
 export default function ProfilePage() {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState("savedRecipes");
 
   useEffect(() => {
     if (session) {
@@ -95,89 +97,118 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold mb-4 dark:text-white">
-            Saved Recipes
-          </h2>
-          
-          {isLoading ? (
+          <div className="mb-6">
+            <div className="flex border-b border-gray-200 dark:border-gray-700">
+              <button
+                className={`py-2 px-4 ${
+                  activeTab === "savedRecipes"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+                onClick={() => setActiveTab("savedRecipes")}
+              >
+                Saved Recipes
+              </button>
+              <button
+                className={`py-2 px-4 ${
+                  activeTab === "weeklyPlan"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+                onClick={() => setActiveTab("weeklyPlan")}
+              >
+                This Week's Plan
+              </button>
+            </div>
+          </div>
+
+          {activeTab === "savedRecipes" ? (
             <>
-            <div className="flex justify-center items-center">
-              <Spinner />
-            </div>
-            </>
-          ) : savedRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {savedRecipes.map((recipe) => (
-                <div
-                  key={recipe._id}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer"
-                  onClick={() => setSelectedRecipe(recipe)}
-                >
-                  <div className="relative h-48">
-                    <Image
-                      src={recipe.image}
-                      alt={recipe.name}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                    <motion.div
-                      className="absolute top-2 right-2"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={(e) => handleRemove(recipe, e)}
-                        className="bg-white text-red-500 hover:text-red-600 dark:bg-gray-800 dark:text-red-400 dark:hover:text-red-500"
-                      >
-                        <BookmarkPlus className="h-4 w-4" />
-                        <span className="sr-only">Remove recipe</span>
-                      </Button>
-                    </motion.div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-xl font-bold mb-2 dark:text-white">
-                      {recipe.name}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
-                      {recipe.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
-                        {recipe.type}
-                      </Badge>
-                      {recipe.cuisines && recipe.cuisines.map((cuisine, index) => (
-                        <Badge key={index} variant="secondary">
-                          {cuisine}
-                        </Badge>
-                      ))}
-                    </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {recipe.cookingTime}
-                    </span>
-                    <Button
-                      className="w-full mt-4"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedRecipe(recipe);
-                      }}
-                    >
-                      View Details
-                    </Button>
-                  </div>
+              <h2 className="text-2xl font-bold mb-4 dark:text-white">
+                Saved Recipes
+              </h2>
+              
+              {isLoading ? (
+                <div className="flex justify-center items-center">
+                  <Spinner />
                 </div>
-              ))}
-            </div>
+              ) : savedRecipes.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {savedRecipes.map((recipe) => (
+                    <div
+                      key={recipe._id}
+                      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer"
+                      onClick={() => setSelectedRecipe(recipe)}
+                    >
+                      <div className="relative h-48">
+                        <Image
+                          src={recipe.image}
+                          alt={recipe.name}
+                          layout="fill"
+                          objectFit="cover"
+                        />
+                        <motion.div
+                          className="absolute top-2 right-2"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={(e) => handleRemove(recipe, e)}
+                            className="bg-white text-red-500 hover:text-red-600 dark:bg-gray-800 dark:text-red-400 dark:hover:text-red-500"
+                          >
+                            <BookmarkPlus className="h-4 w-4" />
+                            <span className="sr-only">Remove recipe</span>
+                          </Button>
+                        </motion.div>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-xl font-bold mb-2 dark:text-white">
+                          {recipe.name}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
+                          {recipe.description}
+                        </p>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
+                            {recipe.type}
+                          </Badge>
+                          {recipe.cuisines && recipe.cuisines.map((cuisine, index) => (
+                            <Badge key={index} variant="secondary">
+                              {cuisine}
+                            </Badge>
+                          ))}
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                          {recipe.cookingTime}
+                        </span>
+                        <Button
+                          className="w-full mt-4"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRecipe(recipe);
+                          }}
+                        >
+                          View Details
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-600 dark:text-gray-400">No saved recipes yet.</p>
+              )}
+              
+              {selectedRecipe && (
+                <RecipeModal
+                  recipe={selectedRecipe}
+                  onClose={() => setSelectedRecipe(null)}
+                />
+              )}
+            </>
           ) : (
-            <p className="text-gray-600 dark:text-gray-400">No saved recipes yet.</p>
-          )}
-          
-          {selectedRecipe && (
-            <RecipeModal
-              recipe={selectedRecipe}
-              onClose={() => setSelectedRecipe(null)}
-            />
+            <SavedMealPlan />
           )}
         </div>
       ) : (

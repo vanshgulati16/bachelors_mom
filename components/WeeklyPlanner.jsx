@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, X } from "lucide-react";
+import { CalendarIcon, X, ChevronDown, ChevronUp } from "lucide-react";
 import { format, differenceInDays, startOfMonth, endOfMonth, addDays } from 'date-fns';
 import { Input } from './ui/input';
 import MultiSelect from './MultiSelect';
@@ -17,6 +17,7 @@ import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
 import ReviewButton from './ReviewButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useRouter } from 'next/navigation';
 
 const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
@@ -44,6 +45,9 @@ export default function WeeklyPlanner() {
   const [isInventoryDialogOpen, setIsInventoryDialogOpen] = useState(false);
   const [inventoryType, setInventoryType] = useState('');
   const [selectedInventoryItems, setSelectedInventoryItems] = useState([]);
+  const [isInputOpen, setIsInputOpen] = useState(false);
+  const router = useRouter();
+  const [numberOfPeople, setNumberOfPeople] = useState(); // New state variable for number of people
 
   const {data: session} = useSession() 
 
@@ -122,6 +126,7 @@ export default function WeeklyPlanner() {
 
   const generateMealPlan = async () => {
     setIsLoading(true);
+    setIsInputOpen(false); // Close the dropdown
     setError(null);
     try {
       const formattedDateRange = formatDateRange();
@@ -139,7 +144,8 @@ export default function WeeklyPlanner() {
           selectedDietaryRestrictions,
           selectedCuisines,
           selectedMealTimes,
-          profession
+          profession,
+          numberOfPeople // Include number of people in the request
         }),
       });
   
@@ -167,119 +173,19 @@ export default function WeeklyPlanner() {
     }
   };
 
-  // const parseMealPlanResponse = (responseText) => {
-  //   const meals = [];
-  //   const lines = responseText.split('\n').filter(line => line.trim() !== '');
-    
-  //   let currentMeal = null;
-  //   let description = [];
-  
-  //   for (const line of lines) {
-  //     const trimmedLine = line.trim();
-      
-  //     // Check for meal time headers
-  //     if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-  //       if (currentMeal) {
-  //         currentMeal.description = description.join(' ').trim();
-  //         meals.push(currentMeal);
-  //         description = [];
-  //       }
-  //       const mealTime = trimmedLine.replace(/\*\*/g, '').trim();
-  //       currentMeal = { mealTime, dish: '', description: '', mainIngredients: [] };
-  //     } 
-  //     // Check for dish names (usually prefixed with a dash or bullet point)
-  //     else if (trimmedLine.startsWith('-') || trimmedLine.startsWith('•')) {
-  //       if (currentMeal) {
-  //         currentMeal.dish = trimmedLine.substring(1).trim();
-  //         // Extract main ingredients from the dish name
-  //         currentMeal.mainIngredients = currentMeal.dish
-  //           .split(' ')
-  //           .filter(word => word.length > 3 && !['with', 'and', 'the', 'for'].includes(word.toLowerCase()));
-  //       }
-  //     } 
-  //     // Anything else is considered part of the description
-  //     else {
-  //       description.push(trimmedLine);
-  //     }
-  //   }
-  
-  //   // Add the last meal if it exists
-  //   if (currentMeal) {
-  //     currentMeal.description = description.join(' ').trim();
-  //     meals.push(currentMeal);
-  //   }
-  
-  //   // Ensure all meals have all required properties
-  //   return meals.map(meal => ({
-  //     mealTime: meal.mealTime || 'Unspecified',
-  //     dish: meal.dish || 'Not specified',
-  //     description: meal.description || 'No description provided',
-  //     mainIngredients: meal.mainIngredients.length ? meal.mainIngredients : ['Not specified']
-  //   }));
-  // };
-  
-  // // Example usage in the handleChangeMeals function
-  // const handleChangeMeals = async (dayNumber, selectedMeals) => {
-  //   setIsLoading(true);
-  //   setError(null);
-  //   try {
-  //     const dateRange = formatDateRange();
-  //     const prompt = `Update the meal plan for Day ${dayNumber} (${dateRange}) with the following changes:
-  //       ${selectedMeals.map(meal => `${meal.mealTime}: ${meal.dish}`).join('\n')}
-  
-  //       Provide the updated meals for this day only, maintaining the same format as before.`;
-  
-  //     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-  //     const result = await model.generateContent(prompt);
-  //     let responseText = await result.response.text();
-  //     console.log("update meal:", responseText)
-  //     const updatedMeals = parseMealPlanResponse(responseText);
-  
-  //     if (!updatedMeals || updatedMeals.length === 0) {
-  //       throw new Error('The generated meal plan is not in the expected format.');
-  //     }
-  
-  //     setMealPlan(prevPlan => prevPlan.map(day => 
-  //       day.day === dayNumber ? { ...day, meals: updatedMeals } : day
-  //     ));
-  
-  //     toast({
-  //       title: "Meal Plan Updated",
-  //       description: `Successfully updated meals for Day ${dayNumber}.`,
-  //     });
-  
-  //     return updatedMeals;
-  //   } catch (error) {
-  //     console.error('Error updating meal plan:', error);
-  //     setError(error.message || 'An error occurred while updating the meal plan. Please try again.');
-  //     toast({
-  //       title: "Error",
-  //       description: error.message || 'Failed to update meal plan. Please try again.',
-  //       variant: "destructive",
-  //     });
-  //     throw error;
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-
 
   return (
     <>
     {session ? (
-      <div className="flex flex-col lg:flex-row h-screen bg-gray-100 dark:bg-gray-800">
+      <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800 relative">
         {/* Left side - Output */}
-        <div className="w-full lg:w-1/2 p-6 overflow-auto">
+        <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 md:pb-6">
           <div className='flex flex-row justify-between mb-4'>
             <h2 className="text-2xl font-bold dark:text-white">Your Meal Plan</h2>
             <ReviewButton/>
           </div>
-          {/* <p className='text-red-500'>Modify meal display to be fixed</p> */}
-        {/* Left side - Output */}
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full">
-              {/* <p className="text-lg dark:text-white">Generating your meal plan...</p> */}
               <Spinner/>
               <Loadingtext/>
             </div>
@@ -289,7 +195,9 @@ export default function WeeklyPlanner() {
               <p className="mt-2">Please try again or contact support if the issue persists.</p>
             </div>
           ) : mealPlan.length > 0 ? (
-            <WeeklyPlannerList mealPlan={mealPlan} />
+            <>
+              <WeeklyPlannerList mealPlan={mealPlan} />
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <p className="text-xl text-gray-500 dark:text-gray-400">
@@ -297,167 +205,194 @@ export default function WeeklyPlanner() {
               </p>
             </div>
           )}
-
         </div> 
 
-        {/* Right side - Input */}
-        <div className="w-full lg:w-1/2 p-6 bg-white dark:bg-gray-900 overflow-auto">
-          <h2 className="text-2xl font-bold mb-4 dark:text-white">Meal Plan Settings</h2>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="glossary" className="dark:text-white">Groceries Bought</Label>
-              <Textarea
-                id="glossary"
-                placeholder="Enter Groceries (e.g., tomato, onion, paneer)"
-                value={glossaryBought}
-                onChange={(e) => setGlossaryBought(e.target.value)}
-                className="dark:bg-gray-800 dark:text-white mb-2"
-              />
-              <Button onClick={() => openInventoryDialog('ingredients')} variant="outline" size="sm">
-              Use from Inventory
+        {/* Right side - Input (dropdown on mobile, always visible on desktop) */}
+        <div className="w-full md:w-2/5 bg-white dark:bg-gray-800 overflow-auto md:relative">
+          {/* Mobile dropdown toggle */}
+          <div className="md:hidden fixed bottom-4 left-4 right-4 bg-blue-600 rounded-lg shadow-lg">
+            <Button
+              onClick={() => setIsInputOpen(!isInputOpen)}
+              className="w-full py-3 flex justify-between items-center text-white rounded-lg transition-colors duration-200"
+            >
+              <span>Meal Plan Settings</span>
+              {isInputOpen ? <ChevronDown className="h-5 w-5" /> : <ChevronUp className="h-5 w-5" />}
             </Button>
-            </div>
+          </div>
 
-            <div>
-              <Label className="dark:text-white">Spices</Label>
-              <MultiSelect
-                options={basicSpices}
-                selectedOptions={spicesAvailable}
-                onChange={setSpicesAvailable}
-                placeholder="Choose spices"
-                className="mb-2"
-              />
-              <div className='mt-2'>
-              <Button onClick={() => openInventoryDialog('spices')} variant="outline" size="sm">
+          {/* Input content */}
+          <div className={`p-6 ${isInputOpen ? 'block' : 'hidden'} md:block fixed md:static bottom-20 left-4 right-4 bg-white dark:bg-gray-800 max-h-[75vh] md:max-h-full overflow-auto rounded-lg shadow-lg`}>
+            <h2 className="text-2xl font-bold mb-4 dark:text-white">Meal Plan Settings</h2>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="glossary" className="dark:text-white">Groceries Bought</Label>
+                <Textarea
+                  id="glossary"
+                  placeholder="Enter Groceries (e.g., tomato, onion, paneer)"
+                  value={glossaryBought}
+                  onChange={(e) => setGlossaryBought(e.target.value)}
+                  className="dark:bg-gray-800 dark:text-white mb-2"
+                />
+                <Button onClick={() => openInventoryDialog('ingredients')} variant="outline" size="sm">
                 Use from Inventory
               </Button>
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="additionalSpices" className="dark:text-white">Additional Spices (Optional)</Label>
-              <Textarea
-                id="additionalSpices"
-                placeholder="Enter additional spices (e.g., chicken masala, oregano, 5 season spices)"
-                value={additionalSpices}
-                onChange={(e) => setAdditionalSpices(e.target.value)}
-                className="dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="profession" className="dark:text-white">Your Profession</Label>
-              <Input
-                id="profession"
-                placeholder="Enter your profession"
-                value={profession}
-                onChange={(e) => setProfession(e.target.value)}
-                className="dark:bg-gray-800 dark:text-white"
-              />
-            </div>
-
-            <div>
-              <Label className="dark:text-white">Plan Duration</Label>
-              <div className="flex items-center space-x-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={`w-[280px] justify-start text-left font-normal ${
-                        !dateRange.from && "text-muted-foreground"
-                      }`}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.from ? formatDateRange() : <span>Select up to 7 days</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="range"
-                      selected={dateRange}
-                      onSelect={handleDateRangeSelect}
-                      month={currentMonth}
-                      fromDate={monthStart}
-                      toDate={monthEnd}
-                      initialFocus
-                      disabled={(date) => 
-                        (dateRange.from && date > addDays(dateRange.from, 6)) ||
-                        date < monthStart ||
-                        date > monthEnd
-                      }
-                    />
-                  </PopoverContent>
-                </Popover>
-                {dateRange.from && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={clearDateSelection}
-                    aria-label="Clear date selection"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
+              <div>
+                <Label className="dark:text-white">Spices</Label>
+                <MultiSelect
+                  options={basicSpices}
+                  selectedOptions={spicesAvailable}
+                  onChange={setSpicesAvailable}
+                  placeholder="Choose spices"
+                  className="mb-2"
+                />
+                <div className='mt-2'>
+                <Button onClick={() => openInventoryDialog('spices')} variant="outline" size="sm">
+                  Use from Inventory
+                </Button>
+                </div>
               </div>
-            </div>
 
-            <div>
-              <Label className="dark:text-white">Dietary Restrictions</Label>
-              <MultiSelect
-                options={dietaryRestrictions}
-                selectedOptions={selectedDietaryRestrictions}
-                onChange={setSelectedDietaryRestrictions}
-                placeholder="Choose dietary restrictions"
-              />
-            </div>
+              <div>
+                <Label htmlFor="additionalSpices" className="dark:text-white">Additional Spices (Optional)</Label>
+                <Textarea
+                  id="additionalSpices"
+                  placeholder="Enter additional spices (e.g., chicken masala, oregano, 5 season spices)"
+                  value={additionalSpices}
+                  onChange={(e) => setAdditionalSpices(e.target.value)}
+                  className="dark:bg-gray-700 dark:text-white"
+                />
+              </div>
 
-            <div>
-              <Label className="dark:text-white">Cuisines</Label>
-              <MultiSelect
-                options={cuisines}
-                selectedOptions={selectedCuisines}
-                onChange={setSelectedCuisines}
-                placeholder="Choose cuisines"
-              />
-            </div>
+              <div>
+                <Label htmlFor="profession" className="dark:text-white">Your Profession</Label>
+                <Input
+                  id="profession"
+                  placeholder="Enter your profession"
+                  value={profession}
+                  onChange={(e) => setProfession(e.target.value)}
+                  className="dark:bg-gray-800 dark:text-white"
+                />
+              </div>
 
-            <div>
-              <Label className="dark:text-white">Meal Times</Label>
-              <MultiSelect
-                options={mealTimes}
-                selectedOptions={selectedMealTimes}
-                onChange={setSelectedMealTimes}
-                placeholder="Choose meal times"
-              />
-            </div>
+              <div>
+                <Label htmlFor="numberOfPeople" className="dark:text-white">Serving Sizes</Label>
+                <Input
+                  id="numberOfPeople"
+                  type="number"
+                  placeholder="Enter the number of people"
+                  min="1"
+                  value={numberOfPeople}
+                  onChange={(e) => setNumberOfPeople(e.target.value)}
+                  className="dark:bg-gray-800 dark:text-white"
+                />
+              </div>
 
-            <Button 
-              className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
-              onClick={generateMealPlan} 
-              disabled={isLoading || !dateRange.from || !dateRange.to}
-            >
-              {isLoading ? 'Generating Plan...' : 'Generate Meal Plan'}
-            </Button>
+              <div>
+                <Label className="dark:text-white">Plan Duration</Label>
+                <div className="flex items-center space-x-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={`w-[280px] justify-start text-left font-normal ${
+                          !dateRange.from && "text-muted-foreground"
+                        }`}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {dateRange.from ? formatDateRange() : <span>Select up to 7 days</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="range"
+                        selected={dateRange}
+                        onSelect={handleDateRangeSelect}
+                        month={currentMonth}
+                        fromDate={monthStart}
+                        toDate={monthEnd}
+                        initialFocus
+                        disabled={(date) => 
+                          (dateRange.from && date > addDays(dateRange.from, 6)) ||
+                          date < monthStart ||
+                          date > monthEnd
+                        }
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  {dateRange.from && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={clearDateSelection}
+                      aria-label="Clear date selection"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label className="dark:text-white">Dietary Restrictions</Label>
+                <MultiSelect
+                  options={dietaryRestrictions}
+                  selectedOptions={selectedDietaryRestrictions}
+                  onChange={setSelectedDietaryRestrictions}
+                  placeholder="Choose dietary restrictions"
+                />
+              </div>
+
+              <div>
+                <Label className="dark:text-white">Cuisines</Label>
+                <MultiSelect
+                  options={cuisines}
+                  selectedOptions={selectedCuisines}
+                  onChange={setSelectedCuisines}
+                  placeholder="Choose cuisines"
+                />
+              </div>
+
+              <div>
+                <Label className="dark:text-white">Meal Times</Label>
+                <MultiSelect
+                  options={mealTimes}
+                  selectedOptions={selectedMealTimes}
+                  onChange={setSelectedMealTimes}
+                  placeholder="Choose meal times"
+                />
+              </div>
+
+              <Button 
+                className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
+                onClick={generateMealPlan} 
+                disabled={isLoading || !dateRange.from || !dateRange.to}
+              >
+                {isLoading ? 'Generating Plan...' : 'Generate Meal Plan'}
+              </Button>
+            </div>
           </div>
         </div>
+
         <Dialog open={isInventoryDialogOpen} onOpenChange={setIsInventoryDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Select {inventoryType} from Inventory</DialogTitle>
-          </DialogHeader>
-          {isLoading ? <Spinner/> : (
-          <MultiSelect
-            options={inventoryType === 'ingredients' ? inventoryIngredients : inventorySpices}
-            selectedOptions={selectedInventoryItems}
-            onChange={setSelectedInventoryItems}
-            placeholder={`Choose ${inventoryType}`}
-          />
-          )}
-          <DialogFooter>
-            <Button onClick={handleUseFromInventory}>Done</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select {inventoryType} from Inventory</DialogTitle>
+            </DialogHeader>
+            {isLoading ? <Spinner/> : (
+            <MultiSelect
+              options={inventoryType === 'ingredients' ? inventoryIngredients : inventorySpices}
+              selectedOptions={selectedInventoryItems}
+              onChange={setSelectedInventoryItems}
+              placeholder={`Choose ${inventoryType}`}
+            />
+            )}
+            <DialogFooter>
+              <Button onClick={handleUseFromInventory}>Done</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     ) : (
       <NotLoggedInComponent/>

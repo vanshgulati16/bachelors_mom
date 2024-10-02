@@ -45,6 +45,9 @@ export default function RecipeModal({ recipe, onClose }) {
                   <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
                     {recipe.type}
                   </Badge>
+                  <Badge variant="secondary">
+                    serving: {recipe.servings}
+                  </Badge>
                   {recipe.cuisines && recipe.cuisines.map((cuisine, index) => (
                     <Badge key={index} variant="secondary">
                       {cuisine}

@@ -17,6 +17,7 @@ export async function POST(req) {
       5. Estimated cooking time
       6. Source or origin of the recipe with link
       7. Whether the dish is Veg or Non Veg
+      8. Serving Sizes (for how many people)
 
       Format the response in following structure:
       [
@@ -28,7 +29,8 @@ export async function POST(req) {
           "cookingTime": "Estimated time",
           "source": "Recipe source or origin",
           "cuisines": ["cuisine1", "cuisine2", ...],
-          "type": "Veg" or "Non-Veg"
+          "type": "Veg" or "Non-Veg",
+          "servings": "number of people"
         },
         ...
       ]

@@ -132,6 +132,9 @@ const fetchRecipe = async (dishName) => {
                       <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
                         {recipe.type}
                       </Badge>
+                      <Badge variant="secondary">
+                        {recipe.servings}
+                      </Badge>
                       {recipe.cuisines && recipe.cuisines.map((cuisine, index) => (
                         <Badge key={index} variant="secondary">
                           {cuisine}

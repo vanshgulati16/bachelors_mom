@@ -32,6 +32,7 @@ const MealCard = ({ meal, isModifying, onSelect, isSelected, onViewRecipe }) => 
             <div>
               <h4 className="font-medium dark:text-white">{meal.mealTime}: {meal.dish}</h4>
               <p className="text-sm text-gray-600 dark:text-gray-300">{meal.time}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Serves: {meal.servings}</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => onViewRecipe(meal.dish)}>
               View Recipe

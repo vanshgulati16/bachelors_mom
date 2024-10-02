@@ -13,7 +13,8 @@ export async function POST(request) {
       selectedDietaryRestrictions,
       selectedCuisines,
       selectedMealTimes,
-      profession
+      profession,
+      numberOfPeople
     } = await request.json();
 
     const prompt = `Generate a ${planDuration === 'week' ? '7-day' : '30-day'} meal plan for ${dateRange} based on the following:
@@ -23,7 +24,7 @@ export async function POST(request) {
       Cuisines: ${selectedCuisines.join(', ')}
       Meal times: ${selectedMealTimes.join(', ')}
       Profession: ${profession}
-
+      Number of people: ${numberOfPeople}
       For each day, provide meals for the selected meal times. Include a brief description and main ingredients for each meal.
       Format the response as a JSON array of objects, where each object represents a day:
       [
@@ -36,7 +37,8 @@ export async function POST(request) {
               "dish": "Dish name",
               "description": "Brief description",
               "mainIngredients": ["ingredient1", "ingredient2"],
-              "time": "time to make the dish"
+              "time": "time to make the dish",
+              "servings": "number of people"
             }
           ]
         }
