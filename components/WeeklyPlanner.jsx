@@ -15,9 +15,8 @@ import { Spinner } from './Spinner';
 import Loadingtext from './LoadingText';
 import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
-import ReviewButton from './ReviewButton';
+// import ReviewButton from './ReviewButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { useRouter } from 'next/navigation';
 
 const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
@@ -46,9 +45,7 @@ export default function WeeklyPlanner() {
   const [inventoryType, setInventoryType] = useState('');
   const [selectedInventoryItems, setSelectedInventoryItems] = useState([]);
   const [isInputOpen, setIsInputOpen] = useState(false);
-  const router = useRouter();
-  const [numberOfPeople, setNumberOfPeople] = useState(); // New state variable for number of people
-
+  const [numberOfPeople, setNumberOfPeople] = useState(); 
   const {data: session} = useSession() 
 
   // useEffect(() => {
@@ -173,6 +170,40 @@ export default function WeeklyPlanner() {
     }
   };
 
+  const handleSaveMealPlan = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/saveMealPlan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mealPlan,
+          dateRange,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save meal plan');
+      }
+
+      toast({
+        title: "Meal Plan Saved",
+        description: "Your meal plan has been successfully saved!",
+      });
+    } catch (error) {
+      console.error('Error saving meal plan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save meal plan. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <>
@@ -182,7 +213,14 @@ export default function WeeklyPlanner() {
         <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 pt-10 md:pb-6">
           <div className='flex flex-row justify-between mb-4'>
             <h2 className="text-2xl font-bold dark:text-white">Your Meal Plan</h2>
-            <ReviewButton/>
+            {/* <ReviewButton/> */}
+               <Button 
+                className="dark:bg-blue-600 dark:hover:bg-blue-700" 
+                onClick={handleSaveMealPlan} 
+                disabled={isLoading || mealPlan.length === 0}
+              >
+                Save Meal Plan
+              </Button>
           </div>
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full">
@@ -371,6 +409,14 @@ export default function WeeklyPlanner() {
               >
                 {isLoading ? 'Generating Plan...' : 'Generate Meal Plan'}
               </Button>
+
+              {/* <Button 
+                className="w-full mt-4 dark:bg-blue-600 dark:hover:bg-blue-700" 
+                onClick={handleSaveMealPlan} 
+                disabled={isLoading || mealPlan.length === 0}
+              >
+                Save Meal Plan
+              </Button> */}
             </div>
           </div>
         </div>

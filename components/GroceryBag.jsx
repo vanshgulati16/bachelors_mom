@@ -29,7 +29,7 @@ export default function GroceryBag() {
       const response = await fetch('/api/groceries');
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setGroceries(data);
       }
     } catch (error) {

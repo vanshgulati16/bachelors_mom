@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -11,16 +11,27 @@ export default function WeeklyPlannerModal({ dish, servings, onClose }) {
   const [loading, setLoading] = useState(false);
   const [generatingImage, setGeneratingImage] = useState(false);
   const [error, setError] = useState(null);
+  const fetchedRef = useRef(false);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    if (dish) {
-      fetchRecipe(dish);
-    }else{
-        setRecipe(null);
-    }
-  }, [dish]);
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
-const fetchRecipe = async (dishName) => {
+  useEffect(() => {
+    if (dish && servings && !fetchedRef.current && mountedRef.current) {
+      fetchRecipe();
+    }
+  }, [dish, servings]);
+
+  const fetchRecipe = async () => {
+    if (fetchedRef.current) {
+      return;
+    }
+    fetchedRef.current = true;
     setLoading(true);
     setError(null);
     try {
@@ -29,17 +40,18 @@ const fetchRecipe = async (dishName) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ dish: dishName }),
+        body: JSON.stringify({ dish, servings }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to fetch recipe: ${response.status} ${response.statusText}. ${errorData.message || ''}`);
+        throw new Error(`Failed to fetch recipe: ${response.status} ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      setRecipe(data);
-      
+      if (mountedRef.current) {
+        setRecipe(data);
+      }
+
       // If no image is available, generate one using AI
       // if (!data.image) {
       //   const generatedImage = await generateImage(data);
@@ -52,10 +64,15 @@ const fetchRecipe = async (dishName) => {
       // }
 
     } catch (err) {
-      setError(`Failed to load recipe. Please try again. Error: ${err.message}`);
-      console.error('Error fetching recipe:', err);
+      if (mountedRef.current) {
+        setError(err.message);
+        console.error('Error fetching recipe:', err);
+      }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
+      fetchedRef.current = false;
     }
   };
 
@@ -132,9 +149,9 @@ const fetchRecipe = async (dishName) => {
                       <Badge className={`${getTypeBadgeColor(recipe.type)} text-white`}>
                         {recipe.type}
                       </Badge>
-                      <Badge variant="secondary">
+                      {/* <Badge variant="secondary">
                         {recipe.servings}
-                      </Badge>
+                      </Badge> */}
                       {recipe.cuisines && recipe.cuisines.map((cuisine, index) => (
                         <Badge key={index} variant="secondary">
                           {cuisine}
