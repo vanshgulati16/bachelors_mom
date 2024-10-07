@@ -48,6 +48,7 @@ export function RecipeGenerator() {
   const [inventoryType, setInventoryType] = useState('');
   const [selectedInventoryItems, setSelectedInventoryItems] = useState([]);
   const [isInputOpen, setIsInputOpen] = useState(false);
+  const [allergies, setAllergies] = useState('');
 
   // useEffect(() => {
   //   fetchInventory();
@@ -123,7 +124,7 @@ export function RecipeGenerator() {
 
   const handleGenerateRecipe = async () => {
     setIsLoading(true);
-    setIsInputOpen(false); // Close the dropdown
+    setIsInputOpen(false);
     try {
       const response = await fetch('/api/getRecipeMix&Match', {
         method: 'POST',
@@ -138,6 +139,7 @@ export function RecipeGenerator() {
           selectedCuisines,
           selectedTypeOfMeal,
           selectedMealTime,
+          allergies, // Add this line
         }),
       });
       
@@ -277,6 +279,17 @@ export function RecipeGenerator() {
                     selectedOptions={selectedMealTime}
                     onChange={setSelectedMealTime}
                     placeholder="Choose meal time"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="allergies" className="dark:text-white">Allergies/Ingredients to avoid</Label>
+                  <Input
+                    id="allergies"
+                    placeholder="Enter your allergies/ingredients to avoid"
+                    value={allergies}
+                    onChange={(e) => setAllergies(e.target.value)}
+                    className="dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 

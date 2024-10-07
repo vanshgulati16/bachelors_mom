@@ -5,6 +5,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from './Spinner';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from "@/components/ui/button";
 
 export default function WeeklyPlannerModal({ dish, servings, onClose }) {
   const [recipe, setRecipe] = useState(null);
@@ -110,6 +113,11 @@ export default function WeeklyPlannerModal({ dish, servings, onClose }) {
     return type === 'Veg' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600';
   };
 
+  const handleRetry = () => {
+    fetchedRef.current = false;
+    fetchRecipe();
+  };
+
   if (!dish) return null;
 
   return (
@@ -125,9 +133,20 @@ export default function WeeklyPlannerModal({ dish, servings, onClose }) {
               <Spinner />
             </div>
           )}
-          {/* {error && (
-            <div className="text-red-500 text-center">{error}</div>
-          )} */}
+          {error && (
+            // <div className="text-center">
+            //   <p className="text-red-500 mb-4"></p>
+            //   <Button onClick={handleRetry}>Retry</Button>
+            // </div>
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+              <Alert variant="destructive" className="mb-4 max-w-md">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Oopsyy!</AlertTitle>
+                <AlertDescription>An error occured, Please try again.</AlertDescription>
+              </Alert>
+              <Button onClick={handleRetry}>Retry</Button>
+            </div>
+          )}
           {recipe && (
             <div className="space-y-4">
                 <div className="relative h-96">

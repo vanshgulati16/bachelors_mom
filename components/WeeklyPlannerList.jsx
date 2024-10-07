@@ -47,7 +47,7 @@ function DayCard({ day }) {
   };
 
   const handleViewRecipe = (dish, servings) => {
-    setRecipeToView({ dish, servings });
+    setRecipeToView({ dish, servings});
   };
 
   const handleCloseModal = () => {

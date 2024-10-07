@@ -46,6 +46,7 @@ export default function WeeklyPlanner() {
   const [selectedInventoryItems, setSelectedInventoryItems] = useState([]);
   const [isInputOpen, setIsInputOpen] = useState(false);
   const [numberOfPeople, setNumberOfPeople] = useState(); 
+  const [allergies, setAllergies] = useState('');
   const {data: session} = useSession() 
 
   // useEffect(() => {
@@ -142,7 +143,8 @@ export default function WeeklyPlanner() {
           selectedCuisines,
           selectedMealTimes,
           profession,
-          numberOfPeople // Include number of people in the request
+          numberOfPeople,
+          allergies
         }),
       });
   
@@ -302,6 +304,17 @@ export default function WeeklyPlanner() {
                   className="dark:bg-gray-700 dark:text-white"
                 />
               </div>
+
+              <div>
+                  <Label htmlFor="allergies" className="dark:text-white">Allergies/Ingredients to avoid</Label>
+                  <Input
+                    id="allergies"
+                    placeholder="Enter your allergies/ingredients to avoid"
+                    value={allergies}
+                    onChange={(e) => setAllergies(e.target.value)}
+                    className="dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
 
               <div>
                 <Label htmlFor="profession" className="dark:text-white">Your Profession</Label>

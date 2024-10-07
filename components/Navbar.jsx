@@ -1,5 +1,5 @@
 "use client"; 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaBars, FaTimes } from "react-icons/fa";
@@ -14,15 +14,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ShoppingBag } from 'lucide-react'
 
-
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const session = useSession();
   const pathname = usePathname();
 
-  function handleSignOut(){
-    signOut({callbackUrl: '/'})
+  // Close menu when pathname changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+  function handleSignOut() {
+    signOut({callbackUrl: '/'});
+    setIsMenuOpen(false);
   }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   const getLinkClassName = (href) => {
     const baseClasses = "px-3 py-1 rounded-lg text-lg";
@@ -65,10 +74,10 @@ export default function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem>
-                  <Link href="/profile" className="w-full">Profile</Link>
+                  <Link href="/profile" className="w-full" onClick={closeMenu}>Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link href="/grocery-bag" className="w-full">
+                  <Link href="/grocery-bag" className="w-full" onClick={closeMenu}>
                     <div className="flex items-center">
                       <ShoppingBag className="w-4 h-4 mr-1" />
                       Inventory
@@ -77,13 +86,13 @@ export default function Navbar() {
                 </DropdownMenuItem>
                 {session.data?.user ? (
                   <DropdownMenuItem>
-                    <button onClick={handleSignOut} className="w-full text-left">
+                    <button onClick={() => { handleSignOut(); }} className="w-full text-left">
                       Logout
                     </button>
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem>
-                    <button onClick={() => signIn()} className="w-full text-left">
+                    <button onClick={() => { signIn(); closeMenu(); }} className="w-full text-left">
                       Login with Google
                     </button>
                   </DropdownMenuItem>
@@ -103,23 +112,23 @@ export default function Navbar() {
         <div className="md:hidden my-2 bg-white">
           {isMenuOpen && (
             <div className="text-center flex flex-col gap-2 border-t border-theme-blue-light py-2 font-bold">
-              <Link className={getLinkClassName("/find")} href="/find">
+              <Link className={getLinkClassName("/find")} href="/find" onClick={closeMenu}>
                 Mix & Match
               </Link>
               {/* <Link className=" py-1 hover:text-black text-gray-500" href="/party">Party Planner</Link> */}
-              <Link className={getLinkClassName("/weekPlanner")} href="/weekPlanner">
+              <Link className={getLinkClassName("/weekPlanner")} href="/weekPlanner" onClick={closeMenu}>
                 Weekly Meal Planner
               </Link>
-              <Link className={getLinkClassName("/curation")} href="/curation">
+              <Link className={getLinkClassName("/curation")} href="/curation" onClick={closeMenu}>
                 Curation
               </Link>
-              <Link className={getLinkClassName("/Inventory")} href="/grocery-bag">
-               <div className="flex items-center justify-center">
-                    <ShoppingBag className="w-4 h-4 mr-1" />
-                    Inventory
-                  </div>
+              <Link className={getLinkClassName("/Inventory")} href="/grocery-bag" onClick={closeMenu}>
+                <div className="flex items-center justify-center">
+                  <ShoppingBag className="w-4 h-4 mr-1" />
+                  Inventory
+                </div>
               </Link>
-              <Link className={getLinkClassName("/profile")} href="/profile">
+              <Link className={getLinkClassName("/profile")} href="/profile" onClick={closeMenu}>
                 Profile
               </Link>
               {session.data?.user ? (

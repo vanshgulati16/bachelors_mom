@@ -4,15 +4,15 @@ import { NextResponse } from 'next/server';
 export async function POST(req) {
   try {
      
-    const { ingredients, selectedSpices, additionalSpices, cookingTime, selectedCuisines, selectedTypeOfMeal, selectedMealTime } = await req.json();
+    const { ingredients, selectedSpices, additionalSpices, cookingTime, selectedCuisines, selectedTypeOfMeal, selectedMealTime, allergies } = await req.json();
 
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
  
-    const prompt = `I have ${ingredients}, ${selectedSpices.join(', ')}, ${additionalSpices}. Suggest 3 dishes I can make at home quickly (within ${cookingTime}) with their recipes and sources. The cuisines is ${selectedCuisines} and the type of meal is ${selectedTypeOfMeal}, for this meal of the day ${selectedMealTime}.For each dish, provide:
+    const prompt = `I have ${ingredients}, ${selectedSpices.join(', ')}, ${additionalSpices}. Suggest 3 dishes I can make at home quickly (within ${cookingTime}) with their recipes and sources. The cuisines is ${selectedCuisines} and the type of meal is ${selectedTypeOfMeal}, for this meal of the day ${selectedMealTime} and avoid using these ingredients ${allergies}.For each dish, provide:
       1. Dish name
       2. Brief description
-      3. Ingredients list
+      3. Ingredients list with quantities
       4. Step-by-step recipe
       5. Estimated cooking time
       6. Source or origin of the recipe with link

@@ -14,7 +14,8 @@ export async function POST(request) {
       selectedCuisines,
       selectedMealTimes,
       profession,
-      numberOfPeople
+      numberOfPeople,
+      allergies
     } = await request.json();
 
     const prompt = `Generate a ${planDuration === 'week' ? '7-day' : '30-day'} meal plan for ${dateRange} based on the following:
@@ -25,7 +26,9 @@ export async function POST(request) {
       Meal times: ${selectedMealTimes.join(', ')}
       Profession: ${profession}
       Number of people: ${numberOfPeople}
-      For each day, provide meals for the selected meal times. Include a brief description and main ingredients for each meal.
+      ${allergies ? `Allergies to avoid: ${allergies}.` : ''}
+
+      For each day, provide meals for the selected meal times. Include a brief description and main ingredients for each meal. Please ensure that the recipe does not include any of the mentioned allergies or ingredients to avoid.
       Format the response as a JSON array of objects, where each object represents a day:
       [
         {
@@ -48,7 +51,7 @@ export async function POST(request) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(prompt);
     let responseText = await result.response.text();
-    responseText = responseText.replace(/```json/g, '').replace(/```/g, '');
+    responseText = responseText.replace(/```json\s*|\s*```/g, '').replace(/```Json\s*|\s*```/g, '').replace(/,\s*([\]}])/g, '$1').trim();
     
     let generatedMealPlan;
     try {
