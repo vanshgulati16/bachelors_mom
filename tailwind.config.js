@@ -17,6 +17,11 @@ module.exports = {
   		}
   	},
   	extend: {
+		fontFamily: {
+			'eb-garamond': ['var(--font-eb-garamond)'],
+			'didact-gothic': ['var(--font-didact-gothic)'],
+			'kaisei-decol': ['var(--font-kaisei-decol)'],
+		},
   		colors: {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',

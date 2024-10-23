@@ -1,39 +1,11 @@
-// import { Inter } from "next/font/google";
-// import "./globals.css";
-// import { Providers } from "@/components/Providers";
-// import Navbar from "@/components/Navbar";
-
-// const inter = Inter({ subsets: ["latin"] });
-
-// export const metadata = {
-//   title: "Door Dash",
-//   description: "Make dishes with your available ingredients",
-// };
-
-// export default function RootLayout({ children }) {
-//   return (
-//     <html lang="en">
-//         <body className='pt-10'>
-//         <Providers attribute="class" defaultTheme="system" enableSystem>
-//         <Navbar/>
-//         <div>
-//           <main>
-//             {children}
-//           </main>
-//         </div>
-//       </Providers>
-//         </body>
-//     </html>
-//   );
-// }
-
-import { Inter, EB_Garamond, Didact_Gothic } from "next/font/google";
+import { Inter, EB_Garamond, Didact_Gothic, Kaisei_Decol } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toaster"
 import SessionWrapper from "@/components/SessionWrapper";
 import { Analytics } from "@vercel/analytics/react"
+import BackgroundWrapper from '@/components/BackgroundWrapper'
 
 const ebGaramond = EB_Garamond({ 
   subsets: ["latin"],
@@ -46,22 +18,30 @@ const didactGothic = Didact_Gothic({
   variable: '--font-didact-gothic',
 });
 
+const kaiseiDecol = Kaisei_Decol({
+  weight: '400',
+  subsets: ["latin"],
+  variable: '--font-kaisei-decol',
+});
+
 export const metadata = {
-  title: "Dish Dash",
-  description: "Make dishes with your available ingredients",
+  title: "Dish Dash Momzie",
+  description: "Your one stop Mommy for all your recipe needs",
 };
 
 export default function RootLayout({ children }) {
   return (
     <SessionWrapper>
       <html lang="en">
-        <body className={`pt-10 ${ebGaramond.variable} ${didactGothic.variable}`}>
+        <body className={`${ebGaramond.variable} ${didactGothic.variable} ${kaiseiDecol.variable}`}>
           <Analytics/>
           <Providers attribute="class" defaultTheme="light" enableSystem>
-            <Navbar />
-            <div>
-              <main>
-                {children}
+            <Navbar/>
+              <div className="pt-12">
+                <main>
+                <BackgroundWrapper>
+                  {children}
+                </BackgroundWrapper>
               </main>
               <Toaster />
             </div>

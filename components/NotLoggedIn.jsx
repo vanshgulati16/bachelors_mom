@@ -18,7 +18,7 @@ const NotLoggedInComponent = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <Alert variant="destructive" className="mb-4 max-w-md">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Oopsyy!</AlertTitle>

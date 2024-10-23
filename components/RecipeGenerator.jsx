@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import BackgroundWrapper from './BackgroundWrapper';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -176,11 +177,11 @@ export function RecipeGenerator() {
   // };
 
   return (
-    <>
+    <BackgroundWrapper>
       {session ? (
-        <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800 relative overflow-hidden">
+        <div className="flex flex-col md:flex-row h-screen relative overflow-hidden">
           {/* Left side - Output */}
-          <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 pt-10 md:pb-6">
+          <div className="w-full md:w-3/5 h-full p-6 overflow-auto pb-24 pt-10 md:pb-6">
             <div className='flex flex-row justify-between'>
               <h2 className="text-2xl font-bold mb-4 dark:text-white">Find your match</h2>
               <ReviewButton/>
@@ -202,8 +203,8 @@ export function RecipeGenerator() {
             )}
           </div>
 
-          {/* Right side - Input (dropdown on mobile, always visible on desktop) */}
-          <div className="w-full md:w-2/5 bg-white dark:bg-gray-800 overflow-auto md:relative">
+          {/* Right side - Input */}
+          <div className="w-full md:w-2/5 overflow-auto md:relative">
             {/* Mobile dropdown toggle */}
             <div className="md:hidden fixed bottom-4 left-4 right-4 bg-blue-600 rounded-lg shadow-lg">
               <Button
@@ -353,6 +354,6 @@ export function RecipeGenerator() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </BackgroundWrapper>
   );
 }

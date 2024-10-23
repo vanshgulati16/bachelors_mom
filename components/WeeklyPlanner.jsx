@@ -17,6 +17,8 @@ import { useSession } from 'next-auth/react';
 import NotLoggedInComponent from './NotLoggedIn';
 // import ReviewButton from './ReviewButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import BackgroundWrapper from './BackgroundWrapper'
+
 
 const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
@@ -209,10 +211,11 @@ export default function WeeklyPlanner() {
 
   return (
     <>
+    <BackgroundWrapper>
     {session ? (
-      <div className="flex flex-col md:flex-row h-screen dark:bg-gray-800 relative">
+      <div className="flex flex-col md:flex-row h-screen relative">
         {/* Left side - Output */}
-        <div className="w-full md:w-3/5 h-full p-6 bg-gray-100 dark:bg-gray-700 overflow-auto pb-24 pt-10 md:pb-6">
+        <div className="w-full md:w-3/5 h-full p-6 overflow-auto pb-24 pt-10 md:pb-6">
           <div className='flex flex-row justify-between mb-4'>
             <h2 className="text-2xl font-bold dark:text-white">Your Meal Plan</h2>
             {/* <ReviewButton/> */}
@@ -248,7 +251,7 @@ export default function WeeklyPlanner() {
         </div> 
 
         {/* Right side - Input (dropdown on mobile, always visible on desktop) */}
-        <div className="w-full md:w-2/5 bg-white dark:bg-gray-800 overflow-auto md:relative">
+        <div className="w-full md:w-2/5 overflow-auto md:relative">
           {/* Mobile dropdown toggle */}
           <div className="md:hidden fixed bottom-4 left-4 right-4 bg-blue-600 rounded-lg shadow-lg">
             <Button
@@ -456,6 +459,7 @@ export default function WeeklyPlanner() {
     ) : (
       <NotLoggedInComponent/>
     )}
+    </BackgroundWrapper>
     </>
   );
 }

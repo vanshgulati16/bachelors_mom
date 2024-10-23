@@ -6,7 +6,7 @@ function BrandLogo() {
     return (
         <Link href="/landing" className="flex gap-2 flex-row items-center justify-center px-3 py-1">
             <Image
-                src="/img/dishdash_logo.jpeg"
+                src="/img/logo.png"
                 alt="logo"
                 width={50}
                 height={50}
