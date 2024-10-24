@@ -15,6 +15,7 @@ import {
 import { ShoppingBag } from 'lucide-react'
 import { motion, AnimatePresence } from "framer-motion";
 import BrandLogo from "@/components/BrandLogo";
+import { Badge } from "@/components/ui/badge";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,7 +46,10 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 h-16" style={{ backgroundColor: '#FFFDD0' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-        <BrandLogo />
+        <div className="flex items-center">
+          <BrandLogo />
+          <Badge variant="primary" className="ml-2">BETA</Badge>
+        </div>
         
         <div className="hidden md:flex items-center space-x-6">
           <Link href="/find" className={getLinkClassName("/find")}>

@@ -2,11 +2,8 @@
 
 import Image from "next/image";
 import { Tabs } from "./ui/tabs";
-import { AboutTextEffect } from "./TextEffect";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import Link from "next/link";
-import { DirectionHoverMixMatch, DirectionHoverWeeklyPlanner } from "./DirectionHover";
 
 export function TabsCard() {
   const [hoveredImage, setHoveredImage] = useState(null);
@@ -93,7 +90,7 @@ const FeatureImage = ({ src, alt, text }) => (
         <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 md:p-10 text-base md:text-xl font-medium text-white bg-gradient-to-br from-amber-200 to-orange-300 font-kaisei-decol">
           <h3 className="text-2xl md:text-4xl font-bold mb-6">Contribute to Dish Dash Momzie</h3>
           <p className="mb-4">Interested in contributing to our UI/UX or development? We'd love to hear from you!</p>
-          <p>Contact us at: <a href="mailto:contribute@dishdash.com" className="underline hover:text-amber-100 font-bold">contribute@dishdash.com</a></p>
+          <p>Contact us at: <a href="mailto:contribute@dishdash.com" className="underline hover:text-amber-100 font-bold">dishdashmomzie@gmail.com</a></p>
         </div>
       ),
     },
