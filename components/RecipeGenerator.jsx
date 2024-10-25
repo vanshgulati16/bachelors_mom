@@ -324,7 +324,7 @@ export function RecipeGenerator() {
                 <Button 
                   className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
                   onClick={handleGenerateRecipe} 
-                  disabled={isLoading || generatingImage || !ingredients}
+                  disabled={isLoading || generatingImage}
                 >
                   {isLoading ? 'Simmering flavors...' : 'Find Your Mix'}
                 </Button>
