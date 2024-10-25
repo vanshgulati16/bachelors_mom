@@ -50,30 +50,6 @@ const FeatureImage = ({ src, alt, text }) => (
       ),
     },
     {
-      title: "Features",
-      value: "features",
-      content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl px-6 md:p-10 text-base md:text-xl font-medium text-white bg-gradient-to-br from-amber-200 to-orange-300 font-kaisei-decol">
-          <h3 className="text-2xl md:text-4xl font-bold mb-4">Features</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-8 items-center justify-center">
-            <FeatureImage
-              src="/img/mix&match.png" 
-              alt="Mix & Match" 
-              text="Mix & Match: Combine ingredients creatively"
-              href="/find"
-            />
-            <FeatureImage
-              src="/img/weeklyplanner.png" 
-              alt="Weekly Planner" 
-              text="Weekly Planner: Plan your meals effortlessly"
-              href="/weekPlanner"
-            />
-          </div>
-        </div>
-      ),
-      className: "text-lg md:text-xl font-bold px-6 py-3",
-    },
-    {
       title: "Mobile App",
       value: "mobile-app",
       content: (

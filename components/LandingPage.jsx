@@ -87,7 +87,7 @@ export default function LandingPage() {
         {/* Mobile view images (above content) */}
         <motion.div
           variants={staggerChildren}
-          className="w-full md:hidden max-w-4xl relative h-1/4 -mt-8 mb-10"
+          className="w-full md:hidden max-w-4xl relative h-1/4 mt-8 mb-10"
         >
           <DishImage 
             src="/img/pasta.jpeg" 
@@ -114,7 +114,7 @@ export default function LandingPage() {
             src="/img/taco.jpeg" 
             name="Tacos al Pastor" 
             cuisine="Mexican" 
-            className="absolute right-0 bottom-0 z-40"
+            className="absolute right-0 top-1/2 z-40"
             bounce={5}
           />
         </motion.div>
@@ -141,7 +141,7 @@ export default function LandingPage() {
         </motion.div>
 
         {/* Center content */}
-        <div className="container mx-auto px-4 max-w-3xl">
+        <div className="container mx-auto px-4 max-w-3xl mt-16 md:mt-0">
           <motion.h1 
             variants={fadeIn}
             className="mb-6 text-4xl md:text-6xl font-bold text-center text-primary font-eb-garamond"
