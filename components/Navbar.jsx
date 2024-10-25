@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuPortal,
+
 } from "@/components/ui/dropdown-menu";
 import { ShoppingBag } from 'lucide-react'
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,7 +45,7 @@ export default function Navbar() {
   
   return (
     <nav className="fixed top-0 left-0 w-full z-50 h-16" style={{ backgroundColor: '#FFFDD0' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         <div className="flex items-center">
           <BrandLogo />
           <Badge variant="primary" className="ml-2">BETA</Badge>
@@ -62,38 +62,6 @@ export default function Navbar() {
             Curation
           </Link>
           {session.data?.user ? (
-          //    <div className="relative">
-          //    <button
-          //      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          //      className="focus:outline-none"
-          //    >
-          //      <Avatar className="w-8 h-8">
-          //        <AvatarImage src={session.data.user.image || ""} />
-          //        <AvatarFallback>{session.data.user.name?.[0] || "?"}</AvatarFallback>
-          //      </Avatar>
-          //    </button>
-          //    {isDropdownOpen && (
-          //      <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-          //        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-          //          <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={closeMenu}>
-          //            Profile
-          //          </Link>
-          //          <Link href="/grocery-bag" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={closeMenu}>
-          //            <div className="flex items-center">
-          //              <ShoppingBag className="w-4 h-4 mr-1" />
-          //              Inventory
-          //            </div>
-          //          </Link>
-          //          <button
-          //            onClick={handleSignOut}
-          //            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          //          >
-          //            Sign out
-          //          </button>
-          //        </div>
-          //      </div>
-          //    )}
-          //  </div>
            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="focus:outline-none">

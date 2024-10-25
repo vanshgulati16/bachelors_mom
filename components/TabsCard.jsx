@@ -54,7 +54,7 @@ const FeatureImage = ({ src, alt, text }) => (
       value: "features",
       content: (
         <div className="w-full overflow-hidden relative h-full rounded-2xl px-6 md:p-10 text-base md:text-xl font-medium text-white bg-gradient-to-br from-amber-200 to-orange-300 font-kaisei-decol">
-          <h3 className="text-2xl md:text-4xl font-bold mb-6">Features</h3>
+          <h3 className="text-2xl md:text-4xl font-bold mb-4">Features</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 md:gap-8 items-center justify-center">
             <FeatureImage
               src="/img/mix&match.png" 
