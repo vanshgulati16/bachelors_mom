@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import BackgroundWrapper from './BackgroundWrapper';
+import BackgroundWrapper from '../BackgroundWrapper';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,12 +10,12 @@ import { useTheme } from "next-themes";
 import RecipeList from './RecipeList';
 import MultiSelect from '@/components/MultiSelect';
 import dynamic from 'next/dynamic';
-const LottieGenerateAnimation = dynamic(() => import('./LottieGenerateAnimation'), { ssr: false });
-import LoadingText from './LoadingText';
+const LottieGenerateAnimation = dynamic(() => import('../LottieGenerateAnimation'), { ssr: false });
+import LoadingText from '../LoadingText';
 import { useSession } from 'next-auth/react';
-import NotLoggedInComponent from './NotLoggedIn';
-import { Spinner } from './Spinner';
-import ReviewButton from './ReviewButton';
+import NotLoggedInComponent from '../NotLoggedIn';
+import { Spinner } from '../Spinner';
+import ReviewButton from '../ReviewButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/components/hooks/use-toast";
 import { ChevronDown, ChevronUp } from "lucide-react"; // Add this import
@@ -177,7 +177,7 @@ export function RecipeGenerator() {
   // };
 
   return (
-    <BackgroundWrapper>
+    <>
       {session ? (
         <div className="flex flex-col md:flex-row h-screen relative overflow-hidden">
           {/* Left side - Output */}
@@ -354,6 +354,6 @@ export function RecipeGenerator() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </BackgroundWrapper>
+    </>
   );
 }

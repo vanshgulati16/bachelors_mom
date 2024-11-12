@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BookmarkPlus, User } from "lucide-react";
 import { motion } from "framer-motion";
-import RecipeModal from "@/components/RecipeModal";
+import RecipeModal from "@/components/Mix&MatchComponent/RecipeModal";
 import { useSession } from "next-auth/react";
 import NotLoggedInComponent from "@/components/NotLoggedIn";
 import { Spinner } from "@/components/Spinner";

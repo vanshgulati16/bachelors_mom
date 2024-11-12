@@ -7,17 +7,17 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, X, ChevronDown, ChevronUp } from "lucide-react";
 import { format, differenceInDays, startOfMonth, endOfMonth, addDays } from 'date-fns';
-import { Input } from './ui/input';
-import MultiSelect from './MultiSelect';
+import { Input } from '../ui/input';
+import MultiSelect from '../MultiSelect';
 import { toast } from "@/components/hooks/use-toast";
 import WeeklyPlannerList from './WeeklyPlannerList';
-import { Spinner } from './Spinner';
-import Loadingtext from './LoadingText';
+import { Spinner } from '../Spinner';
+import Loadingtext from '../LoadingText';
 import { useSession } from 'next-auth/react';
-import NotLoggedInComponent from './NotLoggedIn';
+import NotLoggedInComponent from '../NotLoggedIn';
 // import ReviewButton from './ReviewButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import BackgroundWrapper from './BackgroundWrapper'
+import BackgroundWrapper from '../BackgroundWrapper'
 
 
 const cuisines = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
@@ -211,7 +211,6 @@ export default function WeeklyPlanner() {
 
   return (
     <>
-    <BackgroundWrapper>
     {session ? (
       <div className="flex flex-col md:flex-row h-screen relative">
         {/* Left side - Output */}
@@ -459,7 +458,6 @@ export default function WeeklyPlanner() {
     ) : (
       <NotLoggedInComponent/>
     )}
-    </BackgroundWrapper>
     </>
   );
 }

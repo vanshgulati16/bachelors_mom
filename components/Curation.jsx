@@ -24,9 +24,9 @@ const CurationItem = ({ title, imageSrc }) => {
 
 const Curation = () => {
   const curationItems = [
-    { title: "Iconic", imageSrc: "/img/iconic.png" },
+    { title: "On Reel", imageSrc: "/img/iconic.png" },
     { title: "Celeb Influenced", imageSrc: "/img/celeb.png" },
-    { title: "Festive Season", imageSrc: "https://i.pinimg.com/564x/7d/c3/53/7dc3531a907f14f26882a1a93de6a06f.jpg" },
+    { title: "Festive Season", imageSrc: "/img/festival.jpg" },
   ];
 
   return (

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Spinner } from './Spinner';
-import WeeklyPlannerList from './WeeklyPlannerList';
+import WeeklyPlannerList from './WeeklyPlannerComponent/WeeklyPlannerList';
 
 export default function SavedMealPlan() {
   const [savedMealPlan, setSavedMealPlan] = useState(null);

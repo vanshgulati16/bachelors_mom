@@ -1,4 +1,4 @@
-import WeeklyPlanner from '@/components/WeeklyPlanner'
+import WeeklyPlanner from '@/components/WeeklyPlannerComponent/WeeklyPlanner'
 import React from 'react'
 
 function WeekPlanner() {

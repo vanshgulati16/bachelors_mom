@@ -17,7 +17,7 @@ export async function POST(req) {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `Generate a recipe for ${dish} for ${servings} people. Include the following information:
       - Name of the dish
