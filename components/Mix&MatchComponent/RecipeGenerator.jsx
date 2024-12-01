@@ -1,11 +1,9 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import BackgroundWrapper from '../BackgroundWrapper';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // import { Moon, Sun } from "lucide-react";
-// import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useTheme } from "next-themes";
 import RecipeList from './RecipeList';
 import MultiSelect from '@/components/MultiSelect';
@@ -18,10 +16,8 @@ import { Spinner } from '../Spinner';
 import ReviewButton from '../ReviewButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/components/hooks/use-toast";
-import { ChevronDown, ChevronUp } from "lucide-react"; // Add this import
+import { ChevronDown, ChevronUp } from "lucide-react"; 
 
-// Initialize the Google Generative AI with your API key
-// const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
 
 const basicSpices = ['Salt', 'Pepper', 'Cumin', 'Coriander', 'Turmeric', 'Red Chili Powder', 'Garam Masala', 'Ginger-Garlic Paste'];
 const cuisines  = ['Indian', 'Thai', 'Chinese', 'Continental', 'Korean', 'Japanese', 'Mexican', 'Mediterranean', 'Vietnamese', 'Italian'];
