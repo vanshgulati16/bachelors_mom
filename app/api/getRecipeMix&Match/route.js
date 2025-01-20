@@ -9,7 +9,7 @@ export async function POST(req) {
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'YOUR_API_KEY');
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
  
-    const prompt = `I have ${ingredients}, ${selectedSpices.join(', ')}, ${additionalSpices}. Suggest 6 dishes I can make at home quickly (within ${cookingTime}) with their recipes and sources. The cuisines is ${selectedCuisines} and the type of meal is ${selectedTypeOfMeal}, for this meal of the day ${selectedMealTime} and avoid using these ingredients ${allergies}.For each dish, provide:
+    const prompt = `I have ${ingredients}, ${selectedSpices.join(', ')}, ${additionalSpices}. Suggest 5 dishes I can make at home quickly (within ${cookingTime}) with their recipes and sources. The cuisines is ${selectedCuisines} and the type of meal is ${selectedTypeOfMeal}, for this meal of the day ${selectedMealTime} and avoid using these ingredients ${allergies}.For each dish, provide:
       1. Dish name
       2. Brief description
       3. Ingredients list with quantities
