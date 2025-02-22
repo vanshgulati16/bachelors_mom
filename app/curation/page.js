@@ -1,5 +1,5 @@
-import Curation from '@/components/Curation';
+// import Curation from '@/components/Curation';
 
-export default function CurationPage() {
-  return <Curation />;
-}
+// export default function CurationPage() {
+//   return <Curation />;
+// }

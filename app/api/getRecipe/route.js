@@ -29,6 +29,7 @@ export async function POST(req) {
       - Instructions (numbered steps)
       - Source (if applicable)
       - Servings (for ${servings} people)
+      - Estimate how much calories, protein, carbs, fat, fiber
 
       Format the response as a JSON object with the following structure:
       {
@@ -40,15 +41,24 @@ export async function POST(req) {
         "ingredients": ["Ingredient1", "Ingredient2"],
         "instructions": ["Step 1", "Step 2"],
         "source": "Source of the recipe (if applicable)",
-        "servings": "for ${servings} people"
+        "servings": "for ${servings} people",
+        "nutrition": [
+          "calories": number,
+          "protein": number,
+          "carbs": number,
+          "fat": number,
+          "fiber": number
+        ]
       }`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const responseText = await response.text()
+    const responseText = await response.text();
+
 
     let newResponseText = responseText.replace(/```json/g, '').replace(/```/g, '').replace(/```JSON/g,'');
     const recipeJson = JSON.parse(newResponseText);
+    
     
     return NextResponse.json(recipeJson);
   } catch (error) {

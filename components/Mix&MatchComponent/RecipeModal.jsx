@@ -1,9 +1,12 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { MessageCircle } from "lucide-react";
+import ChatModal from './ChatModal';
+import { Button } from "@/components/ui/button";
 
 export default function RecipeModal({ recipe, onClose }) {
   if (!recipe) return null;
@@ -17,12 +20,18 @@ export default function RecipeModal({ recipe, onClose }) {
   // Handle both 'procedure' and 'recipe' keys for instructions
   const instructions = recipe.procedure || recipe.recipe || [];
 
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   return (
     <Dialog open={!!recipe} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>{recipe.name || 'Untitled Recipe'}</DialogTitle>
-          <DialogDescription>{recipe.description || 'No description available.'}</DialogDescription>
+          <div className="flex justify-between items-center">
+            <div>
+              <DialogTitle>{recipe.name || 'Untitled Recipe'}</DialogTitle>
+              <DialogDescription>{recipe.description || 'No description available.'}</DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
           <div className="space-y-6">
@@ -60,6 +69,46 @@ export default function RecipeModal({ recipe, onClose }) {
               </div>
             </div>
 
+            <Button
+              variant="outline"
+              onClick={() => setIsChatOpen(true)}
+              className="flex items-center gap-2 bg-white/80 hover:bg-white dark:bg-gray-800/80 dark:hover:bg-gray-800"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Ask Around
+            </Button>
+
+            <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <h4 className="font-bold dark:text-white mb-2">Nutrition Information (per serving)</h4>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="flex flex-col items-center p-2 bg-white dark:bg-gray-700 rounded-lg">
+                  <span className="text-lg">🔥</span>
+                  <span className="font-bold">{recipe.nutrition?.calories || '?'}</span>
+                  <span className="text-sm text-gray-500">Calories</span>
+                </div>
+                <div className="flex flex-col items-center p-2 bg-white dark:bg-gray-700 rounded-lg">
+                  <span className="text-lg">🥩</span>
+                  <span className="font-bold">{recipe.nutrition?.protein || '?'}g</span>
+                  <span className="text-sm text-gray-500">Protein</span>
+                </div>
+                <div className="flex flex-col items-center p-2 bg-white dark:bg-gray-700 rounded-lg">
+                  <span className="text-lg">🍚</span>
+                  <span className="font-bold">{recipe.nutrition?.carbs || '?'}g</span>
+                  <span className="text-sm text-gray-500">Carbs</span>
+                </div>
+                <div className="flex flex-col items-center p-2 bg-white dark:bg-gray-700 rounded-lg">
+                  <span className="text-lg">🥑</span>
+                  <span className="font-bold">{recipe.nutrition?.fat || '?'}g</span>
+                  <span className="text-sm text-gray-500">Fat</span>
+                </div>
+                <div className="flex flex-col items-center p-2 bg-white dark:bg-gray-700 rounded-lg">
+                  <span className="text-lg">🌾</span>
+                  <span className="font-bold">{recipe.nutrition?.fiber || '?'}g</span>
+                  <span className="text-sm text-gray-500">Fiber</span>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-6">
               {recipe.ingredients && recipe.ingredients.length > 0 && (
                 <div>
@@ -89,6 +138,13 @@ export default function RecipeModal({ recipe, onClose }) {
             )} */}
           </div>
         </ScrollArea>
+        {isChatOpen && (
+          <ChatModal
+            recipe={recipe}
+            isOpen={isChatOpen}
+            onClose={() => setIsChatOpen(false)}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

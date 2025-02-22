@@ -102,8 +102,17 @@ export default function RecipeList({ recipes }) {
                   {cuisine}
                 </Badge>
               ))}
+              <Badge>🔥 20 cal</Badge>
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">{recipe.cookingTime}</span>
+            <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <Badge>🔥 {recipe.nutrition?.calories || '?'} cal</Badge>
+              <Badge>🥩 {recipe.nutrition?.protein || '?'}g protein</Badge>
+              <Badge>🍚 {recipe.nutrition?.carbs || '?'}g carbs</Badge>
+              <Badge>🥑 {recipe.nutrition?.fat || '?'}g fat</Badge>
+            </div>
+            <span className="text-sm text-gray-500 dark:text-gray-400 block mt-2">
+              {recipe.cookingTime}
+            </span>
             <Button 
               className="w-full mt-4"
               onClick={(e) => {

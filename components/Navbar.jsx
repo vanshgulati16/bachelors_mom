@@ -58,8 +58,11 @@ export default function Navbar() {
           <Link href="/weekPlanner" className={getLinkClassName("/weekPlanner")}>
             Week Meal Planner
           </Link>
-          <Link href="/curation" className={getLinkClassName("/curation")}>
+          {/* <Link href="/curation" className={getLinkClassName("/curation")}>
             Curation
+          </Link> */}
+          <Link href="/recipe-save" className={getLinkClassName("/recipe-save")}>
+            Recipe Save
           </Link>
           {session.data?.user ? (
            <DropdownMenu>
@@ -135,8 +138,11 @@ export default function Navbar() {
                 <Link href="/weekPlanner" className={getLinkClassName("/weekPlanner")} onClick={closeMenu}>
                   Week Meal Planner
                 </Link>
-                <Link href="/curation" className={getLinkClassName("/curation")} onClick={closeMenu}>
+                {/* <Link href="/curation" className={getLinkClassName("/curation")} onClick={closeMenu}>
                   Curation
+                </Link> */}
+                <Link href="/recipe-save" className={getLinkClassName("/recipe-save")} onClick={closeMenu}>
+                  Recipe Save
                 </Link>
                 <Link href="/grocery-bag" className={getLinkClassName("/grocery-bag")} onClick={closeMenu}>
                   <div className="flex items-center">
