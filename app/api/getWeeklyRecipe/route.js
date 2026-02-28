@@ -48,7 +48,7 @@ export async function POST(request) {
       ]
       Provide only the JSON array without any additional text.`;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent(prompt);
     let responseText = await result.response.text();
     responseText = responseText.replace(/```json\s*|\s*```/g, '').replace(/```Json\s*|\s*```/g, '').replace(/,\s*([\]}])/g, '$1').trim();

@@ -6,7 +6,7 @@ const CurationItem = ({ title, imageSrc }) => {
   const subfolder = title.toLowerCase().replace(/\s+/g, '-');
   return (
     <div>
-      {/* <Link href={`/curation/${subfolder}`} className="flex flex-col items-center m-4"> */}
+      <Link href={`/curation/${subfolder}`} className="flex flex-col items-center m-4">
         <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-lg overflow-hidden">
           <Image
             src={imageSrc}
@@ -17,7 +17,7 @@ const CurationItem = ({ title, imageSrc }) => {
           />
         </div>
         <h2 className="mt-4 text-xl font-semibold text-gray-800">{title}</h2>
-      {/* </Link> */}
+      </Link>
     </div>
   );
 };
